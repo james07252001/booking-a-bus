@@ -51,9 +51,8 @@ function displayTable($conn, $tableName) {
 }
 
 // Display tables
-displayTable($conn, 'main_event');
-displayTable($conn, 'sub_event');
-displayTable($conn, 'admin');
+displayTable($conn, 'tblpassenger');
+displayTable($conn, 'tbluser');
 
 $conn->close();
 ?>
