@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete']) && isset($_
 
 // Function to display table
 function displayTable($conn, $tableName) {
-    $sql = "SELECT * FROM $tableName";
+    $sql = "SELECT * FROM `$tableName`";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -77,9 +77,23 @@ function displayTable($conn, $tableName) {
     }
 }
 
-// Display tables
-displayTable($conn, 'tblpassenger');
-displayTable($conn, 'tbluser');
+// Fetch all table names dynamically
+function displayAllTables($conn) {
+    $sql = "SHOW TABLES";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_array()) {
+            $tableName = $row[0];
+            displayTable($conn, $tableName);
+        }
+    } else {
+        echo "<p>No tables found in the database.</p>";
+    }
+}
+
+// Display all tables in the database
+displayAllTables($conn);
 
 $conn->close();
 ?>
