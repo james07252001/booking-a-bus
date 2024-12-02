@@ -12,6 +12,11 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// Function to sanitize output
+function sanitizeOutput($data) {
+    return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+}
+
 // Function to display table
 function displayTable($conn, $tableName) {
     $sql = "SELECT * FROM $tableName";
@@ -26,19 +31,19 @@ function displayTable($conn, $tableName) {
         $fields = $result->fetch_fields();
         echo "<tr>";
         foreach ($fields as $field) {
-            echo "<th style='background-color: #f2f2f2;'>" . $field->name . "</th>";
+            echo "<th style='background-color: #f2f2f2;'>" . sanitizeOutput($field->name) . "</th>";
         }
         echo "</tr>";
         
         // Output data of each row
-        while($row = $result->fetch_assoc()) {
+        while ($row = $result->fetch_assoc()) {
             echo "<tr>";
-            foreach ($row as $value) {
+            foreach ($row as $key => $value) {
                 // Mask password for security
-                if (strpos(strtolower($field->name), 'password') !== false) {
+                if (strpos(strtolower($key), 'password') !== false) {
                     echo "<td>[MASKED]</td>";
                 } else {
-                    echo "<td>" . ($value ?? "NULL") . "</td>";
+                    echo "<td>" . sanitizeOutput($value ?? "NULL") . "</td>";
                 }
             }
             echo "</tr>";
@@ -46,7 +51,7 @@ function displayTable($conn, $tableName) {
         echo "</table>";
         echo "</div>";
     } else {
-        echo "0 results found in $tableName table";
+        echo "0 results found in " . sanitizeOutput($tableName) . " table";
     }
 }
 
@@ -56,37 +61,3 @@ displayTable($conn, 'tbluser');
 
 $conn->close();
 ?>
-
-<style>
-table {
-    border-collapse: collapse;
-    width: 100%;
-    margin: 20px 0;
-    font-family: Arial, sans-serif;
-}
-
-h2 {
-    color: #333;
-    border-bottom: 2px solid #ddd;
-    padding-bottom: 10px;
-}
-
-th, td {
-    border: 1px solid #ddd;
-    padding: 12px;
-    text-align: left;
-}
-
-th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-}
-
-tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-tr:hover {
-    background-color: #f5f5f5;
-}
-</style>
