@@ -80,6 +80,12 @@ function displayTable($conn, $tableName) {
 // Display tables
 displayTable($conn, 'tblpassenger');
 displayTable($conn, 'tbluser');
+displayTable($conn, 'tblbook');
+displayTable($conn, 'tblbus');
+displayTable($conn, 'tblconductor');
+displayTable($conn, 'tblschedule');
+displayTable($conn, 'tblroute');
+displayTable($conn, 'tbllocation');
 
 $conn->close();
 ?>
