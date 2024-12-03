@@ -143,10 +143,10 @@ if (substr($request, -4) == '.php') {
 
                     <button type="submit" class="btn btn-block glow-button" name="sign-up-submit">Register</button>
 
-                    <!--<div class="text-center mt-3 label-bold">
+                    <div class="text-center mt-3 label-bold">
                         <span>Already have an account? </span>
                         <a href="login" class="link-skyblue">Login here</a>
-                    </div>-->
+                    </div>
                 </form>
             </div>
         </div>

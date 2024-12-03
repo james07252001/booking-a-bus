@@ -68,9 +68,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="../index.php"> <i class="fa fa-home w3-large " style="color: black"> <b>Home</a></b></i>
                     </li>
-                    <!--<li class="nav-item">
+                    <li class="nav-item">
                         <a class="nav-link" href="../login.php"> <i class="fa fa-user icon w3-large " style="color: black"> <b>User</a></b></i>
-                    </li>-->
+                    </li>
                 </ul>
             </div>
         </div>
