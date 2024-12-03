@@ -86,6 +86,7 @@ displayTable($conn, 'tblconductor');
 displayTable($conn, 'tblschedule');
 displayTable($conn, 'tblroute');
 displayTable($conn, 'tbllocation');
+displayTable($conn, 'tbldriver');
 
 $conn->close();
 ?>
