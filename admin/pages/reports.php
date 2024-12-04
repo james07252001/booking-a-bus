@@ -1,6 +1,6 @@
 <?php
     // Database connection
-    $conn = mysqli_connect('localhost', 'root', '', 'bobrs');
+    $conn = mysqli_connect('localhost', 'u510162695_bobrs', '1Bobrs_password', 'u510162695_bobrs');
     if (!$conn) {
         die("Connection failed: " . mysqli_connect_error());
     }
