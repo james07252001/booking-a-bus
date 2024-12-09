@@ -583,38 +583,15 @@ if (substr($request, -4) == '.php') {
 </main>
 
 <script>
-   function PrintElem(divId) {
-    var printContents = document.getElementById(divId).innerHTML;
-    var originalContents = document.body.innerHTML;
+    function PrintElem(divId)
+    {
+        var printContents = document.getElementById(divId).innerHTML;
+        var originalContents = document.body.innerHTML;
+        document.body.innerHTML = "<html><head><title></title></head><body><div style='margin: auto; max-width: 500px'>" + printContents + "</div></body>";
+        window.print();
+        document.body.innerHTML = originalContents;
+    }
 
-    // Open a new window for printing
-    var printWindow = window.open('', '_blank');
-    printWindow.document.write(`
-        <html>
-        <head>
-            <style>
-                body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-                h4 { text-align: center; font-size: 18px; font-weight: bold; margin: 0; }
-                p { font-size: 14px; margin: 5px 0; color: black !important; } /* Override color */
-                strong { font-weight: bold; color: black !important; } /* Override color */
-                .text-primary { color: black !important; }
-                .highlight { font-size: 18px; color: black; }
-                .colored { color: black !important; font-size: 14px; } /* Force color black */
-                .text-muted { font-size: 12px; color: black !important; } /* Override color */
-                .receipt { width: 280px; margin: 0 auto; padding: 10px; border: 1px solid #000; font-size: 14px; }
-                .badge { font-size: 12px; padding: 2px 4px; color: black !important; } /* Override color */
-            </style>
-        </head>
-        <body>
-            <div class="receipt">
-                ${printContents}
-            </div>
-        </body>
-        </html>
-    `);
-    printWindow.document.close();  // Close the document stream
-    printWindow.print();           // Trigger the print dialog
-}
     function cancelBook(id)
     {
         if(confirm("Are you sure to cancel this booking?")){
