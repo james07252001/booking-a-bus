@@ -412,6 +412,24 @@ if (substr($request, -4) == '.php') {
                 if ($row['payment_status'] == 'cancel') {
                     $route_from = $new_location->getById($row['route_from']);
                     $route_to = $new_location->getById($row['route_to']);
+
+                    // Fetch bus details (example logic)
+        $bus = $new_bus->getById($row['bus_id']); // Assuming you have a method to get bus details
+
+        if (!$bus) {
+            $bus = [
+                'bus_num' => 'N/A',
+                'bus_code' => 'N/A',
+                'bus_type' => 'N/A'
+            ]; // Default values if bus details are missing
+        }
+        // Fetch driver details (example logic)
+        $driver = $new_driver->getById($row['driver_id']); // Assuming driver_id exists in $row
+        if (!$driver) {
+            $driver = [
+                'name' => 'Unknown Driver'
+            ]; // Default values if driver details are missing
+        }
                     
                     // Calculate discount
                     $discount = 0;
@@ -428,7 +446,7 @@ if (substr($request, -4) == '.php') {
                     switch ($row['passenger_type']) {
                         case 'regular':
                             $color = 'chocolate';
-                            break;
+                            break;  
                         case 'student':
                             $color = 'deeppink';
                             break;

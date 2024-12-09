@@ -49,6 +49,8 @@ class Book
         return $data;
     }
 
+    
+
     public function getAll()
     {
         $query = "SELECT *, b.id as book_id FROM " . $this->table_name . " b INNER JOIN tblschedule s ON b.schedule_id = s.id INNER JOIN tblroute r ON s.route_id = r.id ORDER BY book_date DESC";
