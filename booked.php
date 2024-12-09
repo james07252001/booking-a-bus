@@ -332,7 +332,7 @@ if(empty($schedule_id)){
 
                 // Append the uploaded file to the FormData
                 if (uploadIdFile) {
-                    formData.append('upload_id', uploadIdFile);
+                    formData.append('uploadi_id', uploadIdFile);
                 }
 
                 promises.push(
