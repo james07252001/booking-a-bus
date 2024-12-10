@@ -320,7 +320,7 @@
 </li>
 <!-- Notification Bell End -->
 
-<audio id="notificationSound" src="../assets/sounds/notification-sound.mp3" preload="auto"></audio>
+<!--<audio id="notificationSound" src="../assets/sounds/notification-sound.mp3" preload="auto"></audio>-->
 <script>
     // Function to play sound
     function playNotificationSound() {
