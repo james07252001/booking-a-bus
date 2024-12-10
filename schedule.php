@@ -159,10 +159,27 @@ if (substr($request, -4) == '.php') {
 
 <style>
     main {
-        background-image: url('assets/img/buscv1.jpg');
-        background-size: cover;
-        background-position: center;
-    }
+    background-image: url('assets/img/buscv1.jpg'); /* Updated background image */
+    background-size: cover;
+    background-position: center;
+    position: relative; /* Ensure the overlay works */
+}
+
+main::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Black overlay with 50% opacity */
+    z-index: 1; /* Make sure it is above the background */
+}
+
+main > * {
+    position: relative;
+    z-index: 2; /* Ensure the content is above the overlay */
+}
 
     .bg-primary {
         background-color: #007bff !important;

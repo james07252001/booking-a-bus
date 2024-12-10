@@ -220,6 +220,7 @@ if(empty($schedule_id)){
 </main>
 
 <?php include('includes/scripts.php')?>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     const from = '<?php echo $location_from["location_name"] ?>';
@@ -291,26 +292,47 @@ if(empty($schedule_id)){
 
     $("#booked").click(async function() {
         if (seats.length === 0) {
-            alert('Please select seat number.');
+            Swal.fire({
+                icon: 'warning',
+                title: 'No Seats Selected',
+                text: 'Please select seat number.',
+                confirmButtonText: 'Okay'
+            });
             return;
         }
 
         if (!passenger_id) {
-            alert('Unable to create booking. Please sign in to your account.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Sign In Required',
+                text: 'Unable to create booking. Please sign in to your account.',
+                confirmButtonText: 'Okay'
+            });
             return;
         }
 
         if (!isVerified) {
-            alert('Unable to create booking. Please verify your account.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Account Verification Required',
+                text: 'Unable to create booking. Please verify your account.',
+                confirmButtonText: 'Okay'
+            });
             return;
         }
+
 
         const passengerType = $("#passengerType").val();
         const uploadIdFile = $("#uploadId")[0].files[0];
         const luggageCount = parseInt($("#luggage").val());
 
         if (passengerType !== "regular" && !uploadIdFile) {
-            alert('Please upload an ID for discounted passengers.');
+            Swal.fire({
+                icon: 'warning',
+                title: 'ID Required',
+                text: 'Please upload an ID for discounted passengers.',
+                confirmButtonText: 'Okay'
+            });
             return;
         }
 
@@ -346,14 +368,31 @@ if(empty($schedule_id)){
             try {
                 const values = await Promise.all(promises);
                 console.log('values', values);
-                alert("New booking added successfully!");
-                window.location.href = 'account.php';
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Booking Successful',
+                    text: 'New booking added successfully!',
+                    confirmButtonText: 'Okay'
+                }).then(() => {
+                    window.location.href = 'account.php';
+                });
             } catch (error) {
-                alert("Error on booking.");
-                location.reload();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Booking Failed',
+                    text: 'Error on booking.',
+                    confirmButtonText: 'Retry'
+                }).then(() => {
+                    location.reload();
+                });
             }
         } else {
-            alert('Oops! Unable to book this schedule.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Booking Not Allowed',
+                text: 'Oops! Unable to book this schedule.',
+                confirmButtonText: 'Okay'
+            });
             return;
         }
     });
