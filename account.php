@@ -601,8 +601,7 @@ if (substr($request, -4) == '.php') {
 </main>
 
 <script>
-    function PrintElem(divId)
-    {
+    function PrintElem(divId) {
         var printContents = document.getElementById(divId).innerHTML;
         var originalContents = document.body.innerHTML;
         document.body.innerHTML = "<html><head><title></title></head><body><div style='margin: auto; max-width: 500px'>" + printContents + "</div></body>";
@@ -610,58 +609,86 @@ if (substr($request, -4) == '.php') {
         document.body.innerHTML = originalContents;
     }
 
-    function cancelBook(id)
-    {
-        if(confirm("Are you sure to cancel this booking?")){
-            console.log('cancelBook', id)
-            $.ajax({
-                cache: false,
-                data: {
-                    type: 2,
-                    id,
-                    payment_status: 'cancel'
-                },
-                type: "post",
-                url: "controllers/update-booking.php",
-                success: function(dataResult) {
-                    var dataResult = JSON.parse(dataResult);
-                    if (dataResult.statusCode == 200) {
-                        alert("Booking cancelled successfully.");
-                        location.reload();
-                    } else {
-                        alert(dataResult.title);
-                    }
-                },
-            });
-        }
+    function cancelBook(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you really want to cancel this booking?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, cancel it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    cache: false,
+                    data: {
+                        type: 2,
+                        id,
+                        payment_status: 'cancel'
+                    },
+                    type: "post",
+                    url: "controllers/update-booking.php",
+                    success: function(dataResult) {
+                        var dataResult = JSON.parse(dataResult);
+                        if (dataResult.statusCode == 200) {
+                            Swal.fire(
+                                'Cancelled!',
+                                'Booking has been cancelled successfully.',
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                dataResult.title,
+                                'error'
+                            );
+                        }
+                    },
+                });
+            }
+        });
     }
-
 </script>
 
 <script>
-function validateForm() {
-    var firstName = document.getElementById('first_name').value;
-    var lastName = document.getElementById('last_name').value;
+    function validateForm() {
+        var firstName = document.getElementById('first_name').value;
+        var lastName = document.getElementById('last_name').value;
 
-    // Regex to match only letters
-    var regex = /^[A-Za-z]+$/;
+        // Regex to match only letters
+        var regex = /^[A-Za-z]+$/;
 
-    if (!regex.test(firstName)) {
-        alert("First name can only contain letters.");
-        return false;
+        if (!regex.test(firstName)) {
+            Swal.fire({
+                title: 'Invalid Input',
+                text: "First name can only contain letters.",
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            return false;
+        }
+
+        if (!regex.test(lastName)) {
+            Swal.fire({
+                title: 'Invalid Input',
+                text: "Last name can only contain letters.",
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            return false;
+        }
+
+        return true;
     }
-
-    if (!regex.test(lastName)) {
-        alert("Last name can only contain letters.");
-        return false;
-    }
-
-    return true;
-}
 </script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 
 <?php include('includes/scripts.php')?>
