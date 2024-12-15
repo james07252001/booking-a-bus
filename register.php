@@ -249,47 +249,25 @@ body {
     background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
-/* Background gradient for the register button */
+/* Button with new gradient background */
 .btn-grad {
-    background-image: linear-gradient(to right, #403B4A 0%, #E7E9BB 51%, #403B4A 100%);
+    background-image: linear-gradient(to right, #1FA2FF 0%, #12D8FA 51%, #1FA2FF 100%);
     margin: 10px;
     padding: 15px 45px;
     text-align: center;
     text-transform: uppercase;
     transition: 0.5s;
     background-size: 200% auto;
-    color: darkgray;
+    color: white;
     box-shadow: 0 0 20px #eee;
     border-radius: 10px;
     display: block;
-    position: relative; /* Required for the glow effect */
-    overflow: hidden;
     width: 450px;
 }
 
-/* Glowing LED border effect */
-.btn-grad::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, #ff00ff, #00ffff, #ffff00);
-    z-index: -1;
-    filter: blur(8px);
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-    border-radius: 10px;
-}
-
-/* Hover effect: glowing LED and gradient movement */
-.btn-grad:hover::before {
-    opacity: 1;
-}
-
+/* Hover effect: gradient animation */
 .btn-grad:hover {
-    background-position: right center; /* change the direction of the gradient shift */
+    background-position: right center; /* Moves gradient animation */
     color: #fff;
     text-decoration: none;
 }
