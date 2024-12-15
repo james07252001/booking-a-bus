@@ -372,7 +372,7 @@ if (substr($request, -4) == '.php') {
 
 
 <div class="row mt-4" style="background-color: #4158D0;
-background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
+background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%);
  width: 1200px; margin-left: 2px; height: 600px">
     <div class="col-md-6">
         <canvas id="passengerChart"></canvas>
@@ -503,7 +503,7 @@ background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
 </div>
 
 <!-- The booking chart -->
-<div class="row mt-4" style="background-image: linear-gradient( 90.5deg,  rgba(152,45,255,1) 0.7%, rgba(90,241,255,1) 51.5%, rgba(65,239,164,1) 100.6% );; width: 1200px; margin-left: 2px">
+<div class="row mt-4" style="background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%); width: 1200px; margin-left: 2px">
     <div class="col-12">
         <canvas id="bookingChart"></canvas>
     </div>
