@@ -82,7 +82,9 @@
                     <div class="form-group">
                         <label for="password">Password</label>
                         <input type="password" class="form-control" id="password" name="password" required />
-                        <a href="forget-password.php">Forgot password?</a>
+                    </div>
+                    <div class="text-center mt-2">
+                        <a href="forget-password.php" class="forgot-password">Forgot password?</a>
                     </div>
                     <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
                     <button type="submit" class="btn btn-block btn-dark" name="sign-in-submit">Login</button>
@@ -106,6 +108,17 @@
     min-height: 100vh; /* Ensure it covers the full viewport height */
     margin: 0;
     font-family: Arial, sans-serif; /* Optional: Set a default font family */
+}
+.text-center .forgot-password {
+    display: inline-block; /* Ensure it's treated as an inline element for alignment */
+    font-size: 0.9rem; /* Adjust size if needed */
+    color: #007bff; /* Default Bootstrap link color */
+    text-decoration: none;
+    margin-top: 10px; /* Optional: Add space above */
+}
+
+.text-center .forgot-password:hover {
+    text-decoration: underline; /* Add underline on hover for better UX */
 }
 
 </style>
