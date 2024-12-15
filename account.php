@@ -172,8 +172,12 @@ if (substr($request, -4) == '.php') {
                                             <span class="font-weight-bold"><?php echo $bus['bus_code'] ?></span>
                                         </p>
                                         <p class="d-flex align-items-center justify-content-between mb-0">
-                                            <span class="text-muted d-block">Bus Driver:</span>
-                                            <strong class="text-uppercase"><?php echo $driver['name'] ?></strong>
+                                            <span class="text-muted d-block">Bus Driver Number:</span>
+                                            <strong class="text-uppercase"><?php echo $driver['phone'] ?></strong>
+                                        </p>
+                                        <p class="d-flex align-items-center justify-content-between mb-0">
+                                            <span class="text-muted d-block">Conductor Number:</span>
+                                            <strong class="text-uppercase"><?php echo $conductor['phone'] ?></strong>
                                         </p>
                                         <p class="mb-0 d-flex align-items-center justify-content-between">
                                             <span class="text-muted">Bus Type:</span>
@@ -340,9 +344,13 @@ if (substr($request, -4) == '.php') {
                                         <span class="font-weight-bold"><?php echo $bus['bus_code'] ?></span>
                                     </p>
                                     <p class="d-flex align-items-center justify-content-between mb-0">
-                                        <span class="text-muted d-block">Bus Driver:</span>
-                                        <strong class="text-uppercase"><?php echo $driver['name'] ?></strong>
+                                        <span class="text-muted d-block">Bus Driver Number:</span>
+                                        <strong class="text-uppercase"><?php echo $driver['phone'] ?></strong>
                                     </p>
+                                    <p class="d-flex align-items-center justify-content-between mb-0">
+                                            <span class="text-muted d-block">Conductor Number:</span>
+                                            <strong class="text-uppercase"><?php echo $conductor['phone'] ?></strong>
+                                        </p>
                                     <p class="mb-0 d-flex align-items-center justify-content-between">
                                         <span class="text-muted">Bus Type:</span>
                                         <span class="font-weight-bold"><?php echo $bus['bus_type'] ?></span>
@@ -500,9 +508,13 @@ if (substr($request, -4) == '.php') {
                                         <span class="font-weight-bold"><?php echo $bus['bus_code'] ?></span>
                                     </p>
                                     <p class="d-flex align-items-center justify-content-between mb-0">
-                                        <span class="text-muted d-block">Bus Driver:</span>
-                                        <strong class="text-uppercase"><?php echo $driver['name'] ?></strong>
+                                        <span class="text-muted d-block">Bus Driver Number:</span>
+                                        <strong class="text-uppercase"><?php echo $driver['phone'] ?></strong>
                                     </p>
+                                    <p class="d-flex align-items-center justify-content-between mb-0">
+                                            <span class="text-muted d-block">Conductor Number:</span>
+                                            <strong class="text-uppercase"><?php echo $conductor['phone'] ?></strong>
+                                        </p>
                                     <p class="mb-0 d-flex align-items-center justify-content-between">
                                         <span class="text-muted">Bus Type:</span>
                                         <span class="font-weight-bold"><?php echo $bus['bus_type'] ?></span>
