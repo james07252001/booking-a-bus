@@ -242,7 +242,7 @@ body {
 }
 
 .main-container {
-    background: rgba(255, 255, 255, 0.8); /* Optional: Add a transparent background for content readability */
+    background: rgba(255, 255, 255, 0); /* Optional: Add a transparent background for content readability */
 }
 
     .password-strength-bar .strength-segment,
