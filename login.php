@@ -30,9 +30,17 @@
         $email = $_POST["email"];
         $password = $_POST["password"];
         
-        $new_passenger->login($email, $password);
+        if ($new_passenger->login($email, $password)) {
+            // Login successful
+            header("Location: login.php?signin=success");
+            exit;
+        } else {
+            header("Location: login.php?signin=fail");
+            exit;
+        }
     }
 ?>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <main>
     <div class="container mt-5">
@@ -133,6 +141,23 @@
         grecaptcha.execute('6LfXi5wqAAAAACCfme12iSCd2LbbXqeECqswcs95', {action: 'login'}).then(function(token) {
             document.getElementById('g-recaptcha-response').value = token;
         });
+    });
+    document.addEventListener("DOMContentLoaded", function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const signinStatus = urlParams.get('signin');
+
+        if (signinStatus === 'success') {
+            Swal.fire({
+                title: 'Login Successfully',
+                icon: 'success',
+                confirmButtonText: 'OK',
+                timer: 3000,
+                timerProgressBar: true
+            }).then(() => {
+                // Optional: Redirect to the account page after alert
+                window.location.href = 'account.php';
+            });
+        }
     });
 </script>
 
