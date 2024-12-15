@@ -245,6 +245,11 @@ body {
     background: rgba(255, 255, 255, 0); /* Optional: Add a transparent background for content readability */
 }
 
+.p-3 {
+    background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+}
+
+
     .password-strength-bar .strength-segment,
     .password-match-bar .match-segment {
         height: 5px;
