@@ -73,12 +73,12 @@ if(empty($schedule_id)){
                 </p>
                 <hr>
                 <p class="d-flex align-items-center justify-content-between mb-0">
-                    <span class="text-muted d-block">Bus Driver:</span>
-                    <strong><?php echo $driver['name'] ?></strong>
+                    <span class="text-muted d-block">Bus Driver Number:</span>
+                    <strong><?php echo $driver['phone'] ?></strong>
                 </p>
                 <p class="d-flex align-items-center justify-content-between mb-0">
-                    <span class="text-muted d-block">Bus Conductor:</span>
-                    <strong><?php echo $conductor['name'] ?></strong>
+                    <span class="text-muted d-block">Conductor Number:</span>
+                    <strong><?php echo $conductor['phone'] ?></strong>
                 </p>
                 <p class="d-flex align-items-center justify-content-between mb-0">
                     <span class="text-muted d-block">Bus Name:</span>

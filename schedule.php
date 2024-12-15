@@ -113,11 +113,11 @@ if (substr($request, -4) == '.php') {
                                     </p>
                                     <hr>
                                     <p class="d-flex justify-content-between mb-1">
-                                        <span class="text-muted">Driver Contact #:</span>
+                                        <span class="text-muted">Bus Driver Number:</span>
                                         <strong><?php echo $driver['phone'] ?></strong>
                                     </p>
                                     <p class="d-flex justify-content-between mb-1">
-                                        <span class="text-muted">Conductor Contact #:</span>
+                                        <span class="text-muted">Conductor Number:</span>
                                         <strong><?php echo $conductor['phone'] ?></strong>
                                     </p>
                                     <p class="d-flex justify-content-between mb-1">
