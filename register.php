@@ -182,7 +182,7 @@
 
                     <div class="text-center">
                         <span>Already have an account? </span>
-                        <a href="login.php">Login here</a>
+                        <a href="login.php" style="color: chocolate;">Login here</a>
                     </div>
                 </form>
             </div>
