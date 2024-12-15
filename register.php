@@ -249,6 +249,43 @@ body {
     background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
+/* Background gradient for the register button */
+.btn-dark {
+    background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+    border: none;
+    color: #333;
+    position: relative; /* Required for the glow effect */
+    padding: 10px 20px;
+    overflow: hidden;
+}
+
+/* Glowing LED border effect */
+.btn-dark::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, #ff00ff, #00ffff, #ffff00);
+    z-index: -1;
+    filter: blur(8px);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    border-radius: 10px;
+}
+
+/* Apply glow effect on hover */
+.btn-dark:hover::before {
+    opacity: 1;
+}
+
+/* Change the text color on hover */
+.btn-dark:hover {
+    background-image: linear-gradient(120deg, #ebedee 0%, #fdfbfb 100%);
+    color: #000;
+}
+
 
     .password-strength-bar .strength-segment,
     .password-match-bar .match-segment {
