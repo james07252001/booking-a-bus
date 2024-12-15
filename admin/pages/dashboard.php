@@ -597,7 +597,7 @@ var bookingChart = new Chart(ctx, {
 
 </script>
 
-<div class="row mt-4" style="background-image: linear-gradient( 73.2deg,  rgba(248,205,205,1) 23.2%, rgba(149,170,211,1) 77% ); width: 1200px; margin-left: 2px">
+<div class="row mt-4" style="background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%); width: 1200px; margin-left: 2px">
     <div class="col-12 mt-4">
         <!-- Bus Type Horizontal Bar Chart -->
         <canvas id="busTypeChart"></canvas>
