@@ -117,8 +117,8 @@ if (substr($request, -4) == '.php') {
                                         <strong><?php echo $driver['phone'] ?></strong>
                                     </p>
                                     <p class="d-flex justify-content-between mb-1">
-                                        <span class="text-muted">Conductor :</span>
-                                        <strong><?php echo $conductor['name'] ?></strong>
+                                        <span class="text-muted">Conductor Contact #:</span>
+                                        <strong><?php echo $conductor['phone'] ?></strong>
                                     </p>
                                     <p class="d-flex justify-content-between mb-1">
                                         <span class="text-muted">Bus Name:</span>
