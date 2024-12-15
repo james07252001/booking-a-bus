@@ -40,7 +40,6 @@
         }
     }
 ?>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <main>
     <div class="container mt-5">
@@ -135,6 +134,8 @@
 
 <!-- Add reCAPTCHA v3 script -->
 <script src="https://www.google.com/recaptcha/api.js?render=6LfXi5wqAAAAACCfme12iSCd2LbbXqeECqswcs95"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
     // Replace '6LfXi5wqAAAAACCfme12iSCd2LbbXqeECqswcs95' with your actual site key
     grecaptcha.ready(function() {
