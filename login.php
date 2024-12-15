@@ -1,4 +1,5 @@
 <?php 
+    session_start(); // Ensure session is started at the beginning
     include('includes/layout-header.php');
     
     if(isset($_SESSION["userId"])){
@@ -12,7 +13,39 @@
     $database = new Database();
     $db = $database->getConnection();
 
+    // Function to reset login attempts
+    function resetLoginAttempts() {
+        unset($_SESSION['login_attempts']);
+        unset($_SESSION['last_login_attempt_time']);
+    }
+
+    // Check if login attempts should be reset
+    if (!isset($_SESSION['login_attempts'])) {
+        $_SESSION['login_attempts'] = 0;
+    }
+
+    // Check for lockout
+    $is_locked_out = false;
+    if (isset($_SESSION['last_login_attempt_time'])) {
+        $lockout_time = 30; // 30 seconds lockout
+        $time_since_last_attempt = time() - $_SESSION['last_login_attempt_time'];
+        
+        if ($time_since_last_attempt < $lockout_time) {
+            $is_locked_out = true;
+            $remaining_time = $lockout_time - $time_since_last_attempt;
+        } else {
+            // Lockout time has passed, reset attempts
+            resetLoginAttempts();
+        }
+    }
+
     if(isset($_POST["sign-in-submit"])){
+        // Check if account is locked out
+        if ($is_locked_out) {
+            header("Location: login.php?signin=locked&time={$remaining_time}");
+            exit;
+        }
+
         // Verify reCAPTCHA
         $recaptcha_secret = "6LfXi5wqAAAAADx-yGAWdeuB5VcJwNu-KGXHHetM"; // Replace with your actual secret key
         $response = $_POST['g-recaptcha-response'];
@@ -30,7 +63,23 @@
         $email = $_POST["email"];
         $password = $_POST["password"];
         
-        $new_passenger->login($email, $password);
+        // Attempt login
+        $login_result = $new_passenger->login($email, $password);
+
+        if(!$login_result) {
+            // Increment login attempts
+            $_SESSION['login_attempts']++;
+            $_SESSION['last_login_attempt_time'] = time();
+
+            // Check if max attempts reached
+            if ($_SESSION['login_attempts'] >= 3) {
+                header("Location: login.php?signin=locked&time=30");
+                exit;
+            }
+
+            header("Location: login.php?signin=fail");
+            exit;
+        }
     }
 ?>
 
@@ -59,15 +108,24 @@
                         }
                     }else if(isset($_GET["signin"])){
                         if($_GET["signin"] == "fail"){
+                            $attempts_left = 3 - $_SESSION['login_attempts'];
                             ?>
                                 <div class="alert alert-danger" role="alert">
-                                    Invalid email or password.
+                                    Invalid email or password. 
+                                    <?php echo "Attempts left: {$attempts_left}"; ?>
                                 </div>
                             <?php
                         } else if($_GET["signin"] == "captcha"){
                             ?>
                                 <div class="alert alert-danger" role="alert">
                                     reCAPTCHA verification failed. Please try again.
+                                </div>
+                            <?php
+                        } else if($_GET["signin"] == "locked"){
+                            $remaining_time = isset($_GET['time']) ? intval($_GET['time']) : 30;
+                            ?>
+                                <div class="alert alert-danger" role="alert">
+                                    Too many failed login attempts. Please wait <?php echo $remaining_time; ?> seconds before trying again.
                                 </div>
                             <?php
                         }
@@ -77,15 +135,20 @@
                 <form method="POST" action="" id="login-form">
                     <div class="form-group">
                         <label for="email">Email address</label>
-                        <input type="email" class="form-control" id="email" name="email" required />
+                        <input type="email" class="form-control" id="email" name="email" required 
+                               <?php echo $is_locked_out ? 'disabled' : ''; ?> />
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required />
+                        <input type="password" class="form-control" id="password" name="password" required 
+                               <?php echo $is_locked_out ? 'disabled' : ''; ?> />
                         <a href="forget-password.php">Forgot password?</a>
                     </div>
                     <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
-                    <button type="submit" class="btn btn-block btn-dark" name="sign-in-submit">Login</button>
+                    <button type="submit" class="btn btn-block btn-dark" name="sign-in-submit"
+                            <?php echo $is_locked_out ? 'disabled' : ''; ?>>
+                        Login
+                    </button>
 
                     <div class="text-center">
                         <span>Not register yet? </span>
@@ -108,6 +171,24 @@
             document.getElementById('g-recaptcha-response').value = token;
         });
     });
+
+    // Add a countdown timer for lockout
+    <?php if($is_locked_out): ?>
+    document.addEventListener('DOMContentLoaded', function() {
+        let remainingTime = <?php echo $remaining_time; ?>;
+        const lockoutMessage = document.querySelector('.alert-danger');
+        
+        const countdownTimer = setInterval(function() {
+            remainingTime--;
+            lockoutMessage.textContent = `Too many failed login attempts. Please wait ${remainingTime} seconds before trying again.`;
+            
+            if (remainingTime <= 0) {
+                clearInterval(countdownTimer);
+                location.reload(); // Reload to reset the form
+            }
+        }, 1000);
+    });
+    <?php endif; ?>
 </script>
 
 <?php include('includes/layout-footer.php')?>
