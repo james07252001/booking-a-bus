@@ -97,6 +97,19 @@
     </div>
 </main>
 
+<style>
+    body {
+    background-image: url('assets/img/plaza.jpg'); /* Replace with the actual path to your image */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh; /* Ensure it covers the full viewport height */
+    margin: 0;
+    font-family: Arial, sans-serif; /* Optional: Set a default font family */
+}
+
+</style>
+
 <?php include('includes/scripts.php')?>
 
 <!-- Add reCAPTCHA v3 script -->
