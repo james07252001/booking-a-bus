@@ -426,7 +426,7 @@ background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%);
                         legend: {
                             position: 'top',
                             labels: {
-                        color: 'white' // Change this color to whatever you prefer
+                        color: 'black' // Change this color to whatever you prefer
                     }
                         },
                         title: {
