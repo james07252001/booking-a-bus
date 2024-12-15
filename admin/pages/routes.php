@@ -432,7 +432,7 @@ $("#delete_route_form").submit(function(event) {
 });
 </script>
 <script>
-    // Function to filter "Route To" dropdown based on "Route From"
+// Function to filter "Route To" dropdown based on "Route From"
 function filterRouteTo(fromSelector, toSelector) {
     const selectedFrom = $(fromSelector).val();
     const options = $(toSelector + ' option');
@@ -457,11 +457,17 @@ $(document).on('change', '#route_from_u', function() {
     filterRouteTo('#route_from_u', '#route_to_u');
 });
 
-// Initial filtering on modal open
-$('#newRouteModal, #routeEditModal').on('show.bs.modal', function() {
-    filterRouteTo('#route_from', '#route_to');
+// Filter "Route To" on modal open for editing
+$('#routeEditModal').on('show.bs.modal', function() {
+    // Ensure "Route To" dropdown is filtered correctly when modal opens
     filterRouteTo('#route_from_u', '#route_to_u');
 });
+
+// Initial filtering on modal open for adding a new route
+$('#newRouteModal').on('show.bs.modal', function() {
+    filterRouteTo('#route_from', '#route_to');
+});
+
 
 </script>
 <?php include('includes/scripts.php')?>
