@@ -417,7 +417,7 @@ background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%);
                             'black',
                             'black'
                         ],
-                        borderWidth: 1
+                        borderWidth: 5
                     }]
                 },
                 options: {
