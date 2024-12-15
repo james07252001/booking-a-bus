@@ -241,9 +241,35 @@ body {
     color: black; /* Adjust text color if needed */
 }
 
+/* Add this to your <style> section */
 .main-container {
-    background: rgba(255, 255, 255, 0); /* Optional: Add a transparent background for content readability */
+    position: relative;
+    border: 10px solid transparent; /* Invisible border */
+    padding: 15px; /* Adjust padding */
+    background: rgba(255, 255, 255, 0); /* Optional: Transparent background */
+    box-shadow: 0 0 5px 2px rgba(0, 255, 0, 0.8); /* LED effect (green light) */
+    animation: ledEffect 1.5s infinite alternate; /* Animated LED effect */
 }
+
+/* Keyframes for LED light animation */
+@keyframes ledEffect {
+    0% {
+        box-shadow: 0 0 5px 2px rgba(0, 255, 0, 0.8), 0 0 10px 5px rgba(0, 255, 0, 0.6);
+    }
+    25% {
+        box-shadow: 0 0 10px 5px rgba(0, 255, 0, 0.8), 0 0 20px 10px rgba(0, 255, 0, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 15px 7px rgba(0, 255, 0, 0.9), 0 0 30px 15px rgba(0, 255, 0, 0.3);
+    }
+    75% {
+        box-shadow: 0 0 20px 10px rgba(0, 255, 0, 1), 0 0 40px 20px rgba(0, 255, 0, 0.2);
+    }
+    100% {
+        box-shadow: 0 0 25px 15px rgba(0, 255, 0, 0.9), 0 0 50px 25px rgba(0, 255, 0, 0.1);
+    }
+}
+
 
     .password-strength-bar .strength-segment,
     .password-match-bar .match-segment {
