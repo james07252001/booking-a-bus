@@ -178,7 +178,7 @@
                         <?php endif; ?>
                     </div>
 
-                    <button type="submit" class="btn btn-block btn-dark" name="sign-up-submit">Register</button>
+                    <button type="submit" class="btn-grad" name="sign-up-submit">Register</button>
 
                     <div class="text-center">
                         <span>Already have an account? </span>
@@ -250,17 +250,24 @@ body {
 }
 
 /* Background gradient for the register button */
-.btn-dark {
-    background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
-    border: none;
-    color: #333;
+.btn-grad {
+    background-image: linear-gradient(to right, #403B4A 0%, #E7E9BB 51%, #403B4A 100%);
+    margin: 10px;
+    padding: 15px 45px;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: white;
+    box-shadow: 0 0 20px #eee;
+    border-radius: 10px;
+    display: block;
     position: relative; /* Required for the glow effect */
-    padding: 10px 20px;
     overflow: hidden;
 }
 
 /* Glowing LED border effect */
-.btn-dark::before {
+.btn-grad::before {
     content: '';
     position: absolute;
     top: 0;
@@ -275,16 +282,17 @@ body {
     border-radius: 10px;
 }
 
-/* Apply glow effect on hover */
-.btn-dark:hover::before {
+/* Hover effect: glowing LED and gradient movement */
+.btn-grad:hover::before {
     opacity: 1;
 }
 
-/* Change the text color on hover */
-.btn-dark:hover {
-    background-image: linear-gradient(120deg, #ebedee 0%, #fdfbfb 100%);
-    color: #000;
+.btn-grad:hover {
+    background-position: right center; /* change the direction of the gradient shift */
+    color: #fff;
+    text-decoration: none;
 }
+
 
 
     .password-strength-bar .strength-segment,
