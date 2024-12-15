@@ -111,7 +111,7 @@
 }
 .text-center .forgot-password {
     display: inline-block; /* Ensure it's treated as an inline element for alignment */
-    font-size: 0.9rem; /* Adjust size if needed */
+    font-size: 1.9rem; /* Adjust size if needed */
     color: #007bff; /* Default Bootstrap link color */
     text-decoration: none;
     margin-top: 10px; /* Optional: Add space above */
