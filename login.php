@@ -142,6 +142,7 @@
             document.getElementById('g-recaptcha-response').value = token;
         });
     });
+    
     document.addEventListener("DOMContentLoaded", function() {
         const urlParams = new URLSearchParams(window.location.search);
         const signinStatus = urlParams.get('signin');
