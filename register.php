@@ -264,7 +264,7 @@ body {
     display: block;
     position: relative; /* Required for the glow effect */
     overflow: hidden;
-    width: 500px;
+    width: 400px;
 }
 
 /* Glowing LED border effect */
