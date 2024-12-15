@@ -237,7 +237,7 @@ if (substr($request, -4) == '.php') {
 
 <!-- Total Schedules -->
 <div class="col-6 col-sm-4 col-md-3 mb-3">
-    <div class="bg-white shadow border-top p-3 border-primary rounded h-100" style="background-color: #FFFFFF;background-image: #007bff;">
+    <div class="bg-white shadow border-top p-3 border-primary rounded h-100" style="background-color: #FFFFFF;background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%);">
         <div class="d-flex align-items-center">
             <svg class="pulse-icon" xmlns="http://www.w3.org/2000/svg" height="50px" viewBox="0 0 24 24" width="50px" fill="#000000">
                 <path d="M0 0h24v24H0V0z" fill="none" />
