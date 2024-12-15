@@ -101,7 +101,7 @@ if (substr($request, -4) == '.php') {
                     $route_to = $new_location->getById($row['route_to']);
                     $bus = $new_bus->getById($row["bus_id"]);
                     $driver = $new_driver->getById($row["driver_id"]);
-                    $conductor = $new_conductor->getById($row["conductor_id"]); // Retrieve conductor details
+                    $conductor = $conductor->getById($row["conductor_id"]); // Retrieve conductor details
                     $vessel = $new_vessel->getById($row["vessel_id"]);
                     
                     // Calculate discount
