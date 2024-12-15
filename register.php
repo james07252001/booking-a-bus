@@ -1,151 +1,194 @@
 <?php 
-include('includes/layout-header.php');
+    include('includes/layout-header.php');
+    
+    if(isset($_SESSION["userId"])){
+        header("location: account.php");
+        exit;
+    }
+    
+    include('controllers/db.php');
+    include('controllers/passenger.php');
 
-if (isset($_SESSION["userId"])) {
-    header("location: account.php");
-    exit;
-}
+    $database = new Database();
+    $db = $database->getConnection();
 
-include('controllers/db.php');
-include('controllers/passenger.php');
+    // Initialize error arrays
+    $errors = [
+        'first_name' => '',
+        'last_name' => '',
+        'address' => '',
+        'phone_number' => '',
+        'email' => '',
+        'password' => '',
+        'confirm_password' => ''
+    ];
 
-$database = new Database();
-$db = $database->getConnection();
+    if(isset($_POST["sign-up-submit"])){
+        $new_passenger = new Passenger($db);
+        
+        $first_name = $_POST["first_name"];
+        $last_name = $_POST["last_name"];
+        $email = $_POST["email"];
+        $phone_number = $_POST["phone_number"];
+        $address = $_POST["address"];
+        $password = $_POST["password"];
+        $confirm_password = $_POST["confirm_password"];
+        $terms_accepted = isset($_POST["terms_accepted"]) ? $_POST["terms_accepted"] : false;
 
-$password_error = ""; // Initialize password error message
+        // Sanitize first name and last name (only letters, spaces, and optional period)
+        if (!preg_match('/^[a-zA-Z\s\.]+$/', $first_name)) {
+            $errors['first_name'] = "Name can only contain letters, spaces, and optional periods.";
+        }
 
-if (isset($_POST["sign-up-submit"])) {
-    $new_passenger = new Passenger($db);
+        if (!preg_match('/^[a-zA-Z\s\.]+$/', $last_name)) {
+            $errors['last_name'] = "Name can only contain letters, spaces, and optional periods.";
+        }
 
-    // Sanitize user inputs
-    $first_name = htmlspecialchars(trim($_POST["first_name"]), ENT_QUOTES, 'UTF-8');
-    $last_name = htmlspecialchars(trim($_POST["last_name"]), ENT_QUOTES, 'UTF-8');
-    $email = filter_var(trim($_POST["email"]), FILTER_SANITIZE_EMAIL);
-    $phone_number = trim($_POST["phone_number"]);
-    $address = htmlspecialchars(trim($_POST["address"]), ENT_QUOTES, 'UTF-8');
-    $password = $_POST["password"];
-    $confirm_password = $_POST["confirm_password"];
-    $terms_agreed = isset($_POST["terms"]) ? true : false;
+        // Sanitize phone number (must be 11 digits starting with '09')
+        if (!preg_match('/^09\d{9}$/', $phone_number)) {
+            $errors['phone_number'] = "Phone number must be exactly 11 digits starting with '09'.";
+        }
 
-    // Validation patterns
-    $name_pattern = "/^[a-zA-ZñÑ\s]+$/";
-    $address_pattern = "/^[a-zA-ZñÑ\s,]+$/";
-    $phone_pattern = "/^09[0-9]{9}$/";
-    $password_pattern = "/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/";
+        // Sanitize email (only allow @gmail.com)
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL) || !preg_match('/@gmail\.com$/', $email)) {
+            $errors['email'] = "Email must be a valid Gmail address.";
+        }
 
-    // Validate inputs
-    if (!preg_match($name_pattern, $first_name)) {
-        $error = "First name can only contain letters.";
-    } elseif (!preg_match($name_pattern, $last_name)) {
-        $error = "Last name can only contain letters.";
-    } elseif (!preg_match($address_pattern, $address)) {
-        $error = "Address can only contain letters, spaces, and commas.";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = "Invalid email format.";
-    } elseif (!preg_match($phone_pattern, $phone_number)) {
-        $error = "Invalid phone number format. It must start with 09 and contain exactly 11 digits.";
-    } elseif (!preg_match($password_pattern, $password)) {
-        $password_error = "Password must be at least 8 characters long, including uppercase, lowercase, numbers, and special characters.";
-    } elseif ($password !== $confirm_password) {
-        $error = "Passwords do not match.";
-    } elseif (!$terms_agreed) {
-        $error = "You must agree to the Terms and Conditions.";
-    } else {
-        // Hash the password
-        $hashed_password = password_hash($password, PASSWORD_ARGON2I);
+        // Validate password strength (must be at least 8 characters and contain only letters and numbers)
+        if (!preg_match('/^[a-zA-Z0-9]{8,}$/', $password)) {
+            $errors['password'] = "Password must be at least 8 characters and contain only numbers and letters.";
+        }
 
-        // Attempt to create a new user
-        if ($new_passenger->create($first_name, $last_name, $email, $phone_number, $address, $hashed_password)) {
-            header("Location: success.php");
-            exit;
-        } else {
-            $error = "Failed to create account. Please try again.";
+        // Check if passwords match
+        if ($password !== $confirm_password) {
+            $errors['confirm_password'] = "Passwords do not match.";
+        }
+
+        // Check if there are no errors before proceeding
+        $hasErrors = false;
+        foreach ($errors as $error) {
+            if (!empty($error)) {
+                $hasErrors = true;
+                break;
+            }
+        }
+
+        if (!$hasErrors) {
+            // Proceed with creating the account
+            $new_passenger->create($first_name, $last_name, $email, $phone_number, $address, $password);
+        }
+
+        if (!$terms_accepted) {
+            $errors['terms'] = "You must accept the Terms and Conditions to register.";
         }
     }
-}
 ?>
+
 <main>
-    <div class="signup-container d-flex align-items-center justify-content-center">
-        <div class="w-100 m-auto bg-white shadow-sm" style="max-width: 500px;">
-            <div class="bg-primary p-3 header-gradient">
+    <div class="container mt-3">
+        <div class="w-100 m-auto bg-white shadow-sm" style="max-width: 500px">
+            <div class="bg-primary p-3">
                 <h1 class="text-center">Create an Account</h1>
             </div>
 
             <div class="p-3">
-                <?php
-                if (isset($error)) {
-                    echo '<div class="alert alert-danger" role="alert">' . htmlspecialchars($error, ENT_QUOTES, 'UTF-8') . '</div>';
-                }
-                ?>
-
-                <form method="POST" action="" id="signupForm">
-                    <div class="form-group">
-                        <label for="first_name" class="label-bold">First Name</label>
-                        <input type="text" class="form-control" id="first_name" name="first_name" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="last_name" class="label-bold">Last Name</label>
-                        <input type="text" class="form-control" id="last_name" name="last_name" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="address" class="label-bold">Address</label>
-                        <input type="text" class="form-control" id="address" name="address" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="email" class="label-bold">Email address</label>
-                        <input type="email" class="form-control" id="email" name="email" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="phone_number" class="label-bold">Phone</label>
-                        <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="09XXXXXXXXX" required pattern="09[0-9]{9}" maxlength="11" inputmode="numeric" />
-                    </div>
-                    <div class="form-group">
-                        <label for="password" class="label-bold">Password</label>
-                        <div class="input-group">
-                            <input type="password" class="form-control" id="password" name="password" required minlength="8" />
-                            <div class="input-group-append">
-                                <span class="input-group-text toggle-password" id="toggle-password">
-                                    <i class="fa fa-eye" aria-hidden="true"></i>
-                                </span>
-                            </div>
+                <form method="POST" action="">
+                    <div class="form-row mb-3">
+                        <div class="col-md-6">
+                            <label for="first_name">First Name</label>
+                            <input type="text" class="form-control <?php echo !empty($errors['first_name']) ? 'is-invalid' : ''; ?>" id="first_name" name="first_name" value="<?php echo htmlspecialchars($first_name ?? ''); ?>" required />
+                            <?php if(!empty($errors['first_name'])): ?>
+                                <div class="invalid-feedback"><?php echo $errors['first_name']; ?></div>
+                            <?php endif; ?>
                         </div>
-                        <?php if (!empty($password_error)) : ?>
-                            <small class="text-danger"><?php echo $password_error; ?></small>
+                        <div class="col-md-6">
+                            <label for="last_name">Last Name</label>
+                            <input type="text" class="form-control <?php echo !empty($errors['last_name']) ? 'is-invalid' : ''; ?>" id="last_name" name="last_name" value="<?php echo htmlspecialchars($last_name ?? ''); ?>" required />
+                            <?php if(!empty($errors['last_name'])): ?>
+                                <div class="invalid-feedback"><?php echo $errors['last_name']; ?></div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <input type="text" class="form-control" id="address" name="address" value="<?php echo htmlspecialchars($address ?? ''); ?>" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="phone_number">Contact Number</label>
+                        <input type="text" class="form-control <?php echo !empty($errors['phone_number']) ? 'is-invalid' : ''; ?>" id="phone_number" name="phone_number" value="<?php echo htmlspecialchars($phone_number ?? ''); ?>" required />
+                        <?php if(!empty($errors['phone_number'])): ?>
+                            <div class="invalid-feedback"><?php echo $errors['phone_number']; ?></div>
                         <?php endif; ?>
                     </div>
                     <div class="form-group">
-                        <label for="confirm_password" class="label-bold">Confirm Password</label>
-                        <div class="input-group">
-                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required minlength="7" />
-                            <div class="input-group-append">
-                                <span class="input-group-text toggle-password" id="toggle-confirm-password">
-                                    <i class="fa fa-eye" aria-hidden="true"></i>
-                                </span>
+                        <label for="email">Email address</label>
+                        <input type="email" class="form-control <?php echo !empty($errors['email']) ? 'is-invalid' : ''; ?>" id="email" name="email" value="<?php echo htmlspecialchars($email ?? ''); ?>" required />
+                        <?php if(!empty($errors['email'])): ?>
+                            <div class="invalid-feedback"><?php echo $errors['email']; ?></div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="form-group position-relative">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control <?php echo !empty($errors['password']) ? 'is-invalid' : ''; ?>" id="password" name="password" required />
+                        <i id="togglePassword" class="fa fa-eye position-absolute" style="top: 12px; right: 15px; cursor: pointer;"></i>
+                        
+                        <!-- Password Strength Indicator -->
+                        <div class="password-strength-container mt-2">
+                            <div class="password-strength-bar d-flex">
+                                <div id="strength-1" class="strength-segment flex-grow-1 mr-1"></div>
+                                <div id="strength-2" class="strength-segment flex-grow-1 mr-1"></div>
+                                <div id="strength-3" class="strength-segment flex-grow-1"></div>
                             </div>
+                            <small id="password-strength-text" class="form-text text-muted">Password Strength: Weak</small>
                         </div>
+
+                        <?php if(!empty($errors['password'])): ?>
+                            <div class="invalid-feedback"><?php echo $errors['password']; ?></div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="form-group position-relative">
+                        <label for="confirm_password">Confirm Password</label>
+                        <input type="password" class="form-control <?php echo !empty($errors['confirm_password']) ? 'is-invalid' : ''; ?>" id="confirm_password" name="confirm_password" required />
+                        <i id="toggleConfirmPassword" class="fa fa-eye position-absolute" style="top: 12px; right: 15px; cursor: pointer;"></i>
+                        
+                        <!-- Password Match Indicator -->
+                        <div class="password-match-container mt-2">
+                            <div class="password-match-bar d-flex">
+                                <div id="match-indicator" class="match-segment flex-grow-1"></div>
+                            </div>
+                            <small id="password-match-text" class="form-text text-muted">Passwords do not match</small>
+                        </div>
+
+                        <?php if(!empty($errors['confirm_password'])): ?>
+                            <div class="invalid-feedback"><?php echo $errors['confirm_password']; ?></div>
+                        <?php endif; ?>
                     </div>
 
                     <!-- Terms and Conditions Checkbox -->
                     <div class="form-group">
-                        <label class="form-check-label" for="terms">
-                            <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
-                            I agree to the <a href="#" id="terms-link">Terms and Conditions</a>
-                        </label>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="terms_accepted" name="terms_accepted">
+                            <label class="custom-control-label" for="terms_accepted">
+                                I have read and agree to the 
+                                <a href="#" data-toggle="modal" data-target="#termsModal">Terms and Conditions</a>
+                            </label>
+                        </div>
+                        <?php if(!empty($errors['terms'])): ?>
+                            <div class="text-danger small mt-1"><?php echo $errors['terms']; ?></div>
+                        <?php endif; ?>
                     </div>
 
-                    <button type="submit" class="btn btn-block glow-button" name="sign-up-submit">Register</button>
+                    <button type="submit" class="btn btn-block btn-dark" name="sign-up-submit">Register</button>
 
-                    <div class="text-center mt-3 label-bold">
+                    <div class="text-center">
                         <span>Already have an account? </span>
-                        <a href="login" class="link-skyblue">Login here</a>
+                        <a href="login.php">Login here</a>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-</main>
-
-<!-- Modal for Terms and Conditions -->
+   <!-- Modal for Terms and Conditions -->
 <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -186,172 +229,138 @@ if (isset($_POST["sign-up-submit"])) {
     </div>
   </div>
 </div>
-
-
-<?php include('includes/scripts.php') ?>
-<?php include('includes/layout-footer.php') ?>
-
-<script>
-// Updated validation to accept letters, spaces, and ñ
-document.getElementById('first_name').addEventListener('input', function() {
-    const firstName = this.value;
-    const firstNameError = document.getElementById('firstNameError');
-    if (/[^a-zA-ZñÑ\s]/.test(firstName)) {
-        firstNameError.style.display = 'block';
-    } else {
-        firstNameError.style.display = 'none';
-    }
-});
-
-// JavaScript to handle Terms and Conditions popup
-document.getElementById('terms-link').addEventListener('click', function(e) {
-    e.preventDefault();
-    var termsModal = new bootstrap.Modal(document.getElementById('termsModal'));
-    termsModal.show();
-});
-
-// Optional: Close modal manually if needed
-var closeButton = document.querySelector('[data-bs-dismiss="modal"]');
-closeButton.addEventListener('click', function() {
-    var termsModal = bootstrap.Modal.getInstance(document.getElementById('termsModal'));
-    termsModal.hide();
-});
-document.getElementById('last_name').addEventListener('input', function() {
-    const lastName = this.value;
-    const lastNameError = document.getElementById('lastNameError');
-    if (/[^a-zA-ZñÑ\s]/.test(lastName)) {
-        lastNameError.style.display = 'block';
-    } else {
-        lastNameError.style.display = 'none';
-    }
-});
-
-// Updated address validation to allow letters, spaces, ñ, and commas
-document.getElementById('address').addEventListener('input', function() {
-    const address = this.value;
-    if (/[^a-zA-ZñÑ\s,]/.test(address)) {
-        alert("Address can only contain letters, spaces, ñ, and commas.");
-    }
-});
-
-// Password match validation with color feedback
-const passwordField = document.getElementById('password');
-const confirmPasswordField = document.getElementById('confirm_password');
-const message = document.createElement('small'); // Create a small element for the message
-message.style.display = 'block'; // Ensure the message is displayed below the input
-confirmPasswordField.parentNode.appendChild(message); // Add the message element below the confirm password field
-
-confirmPasswordField.addEventListener('input', function() {
-    const password = passwordField.value;
-    const confirmPassword = confirmPasswordField.value;
-
-    if (password === confirmPassword && confirmPassword !== '') {
-        // Passwords match
-        confirmPasswordField.style.borderColor = 'green';
-        message.textContent = 'Passwords match';
-        message.style.color = 'green';
-    } else {
-        // Passwords do not match
-        confirmPasswordField.style.borderColor = 'red';
-        message.textContent = 'Passwords do not match';
-        message.style.color = 'red';
-    }
-});
-
-// Toggle password visibility
-document.querySelectorAll('.toggle-password').forEach(function(icon) {
-    icon.addEventListener('click', function() {
-        const passwordInput = icon.id === 'toggle-password' ? passwordField : confirmPasswordField;
-        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordInput.setAttribute('type', type);
-        icon.querySelector('i').classList.toggle('fa-eye');
-        icon.querySelector('i').classList.toggle('fa-eye-slash');
-    });
-});
-
-document.getElementById('phone_number').addEventListener('input', function() {
-    // Allow only numeric input and prevent letters, symbols, and spaces
-    this.value = this.value.replace(/[^0-9]/g, ''); // Removes any non-digit characters
-});
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
-
+</main>
 
 <style>
-    main {
-    background-image: url('assets/img/d3.png');
-    background-size: cover;
-    background-position: center;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
-
-.signup-container {
-    width: 100%;
-    max-width: 500px;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-}
-
-.header-gradient {
-    background: radial-gradient(circle, rgba(51, 122, 183, 1) 0%, rgba(4, 92, 167, 1) 50%, rgba(0, 137, 255, 1) 100%);
-    text-align: center;
-    padding: 15px;
-    color: #fff;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-}
-
-.glow-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    color: white;
-    background-image: linear-gradient(-20deg, #337ab7 0%, #337ab7 100%);
-    border: none;
-    border-radius: 5px;
-    margin-top: 20px;
-}
-
-.label-bold {
-    font-weight: bold;
-    color: #333;
-}
-
-.link-skyblue {
-    color: #337ab7;
-    font-weight: bold;
-}
-
-.alert {
-    margin-bottom: 20px;
-}
-
-.form-check-label {
-    margin-bottom: 0;
-    margin-left: 23%;
-}
-
-
-/* Styling for the password match message */
-small {
-    font-size: 0.9em;
-    margin-top: 5px;
-}
-
-
-@media (max-width: 576px) {
-    .signup-container {
-        padding: 15px;
+    .password-strength-bar .strength-segment,
+    .password-match-bar .match-segment {
+        height: 5px;
+        background-color: #e0e0e0;
+        transition: background-color 0.3s ease;
     }
 
-    h1 {
-        font-size: 1.5rem;
+    .password-strength-bar .strength-segment.weak {
+        background-color: #ff4136;
     }
-}
 
+    .password-strength-bar .strength-segment.medium {
+        background-color: #ff851b;
+    }
+
+    .password-strength-bar .strength-segment.strong {
+        background-color: #2ecc40;
+    }
+
+    .password-match-bar .match-segment.match {
+        background-color: #2ecc40;
+    }
+
+    .password-match-bar .match-segment.no-match {
+        background-color: #ff4136;
+    }
 </style>
+
+
+<script>
+// Terms and Conditions Checkbox Handling
+document.addEventListener('DOMContentLoaded', function() {
+        const termsCheckbox = document.getElementById('terms_accepted');
+        const registerButton = document.getElementById('registerButton');
+        const closeTermsModal = document.getElementById('closeTermsModal');
+
+        termsCheckbox.addEventListener('change', function() {
+            registerButton.disabled = !this.checked;
+        });
+
+        // Optional: Add close modal logic if needed
+        closeTermsModal.addEventListener('click', function() {
+            // You can add any additional logic here before closing the modal
+            // For now, it will just close the modal due to data-bs-dismiss
+        });
+    });
+
+    // Show password functionality using eye icon for password and confirm password
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        const passwordField = document.getElementById('password');
+        const type = passwordField.type === 'password' ? 'text' : 'password';
+        passwordField.type = type;
+        this.classList.toggle('fa-eye-slash');
+    });
+
+    document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+        const confirmPasswordField = document.getElementById('confirm_password');
+        const type = confirmPasswordField.type === 'password' ? 'text' : 'password';
+        confirmPasswordField.type = type;
+        this.classList.toggle('fa-eye-slash');
+    });
+
+    // Password Strength and Match Indicators
+    document.getElementById('password').addEventListener('input', function() {
+        const password = this.value;
+        const strengthSegments = [
+            document.getElementById('strength-1'),
+            document.getElementById('strength-2'),
+            document.getElementById('strength-3')
+        ];
+        const strengthText = document.getElementById('password-strength-text');
+        const confirmPassword = document.getElementById('confirm_password').value;
+
+        // Password strength calculation
+        let strength = 0;
+        if (password.length >= 8) strength++;
+        if (/[A-Z]/.test(password)) strength++;
+        if (/[0-9]/.test(password)) strength++;
+
+        // Reset segments
+        strengthSegments.forEach(segment => {
+            segment.classList.remove('weak', 'medium', 'strong');
+        });
+
+        // Color and text based on strength
+        if (strength === 0 || password.length < 8) {
+            strengthSegments[0].classList.add('weak');
+            strengthText.textContent = 'Password Strength: Weak';
+            strengthText.style.color = '#ff4136';
+        } else if (strength === 1) {
+            strengthSegments[0].classList.add('weak');
+            strengthSegments[1].classList.add('weak');
+            strengthText.textContent = 'Password Strength: Moderate';
+            strengthText.style.color = '#ff851b';
+        } else {
+            strengthSegments[0].classList.add('strong');
+            strengthSegments[1].classList.add('strong');
+            strengthSegments[2].classList.add('strong');
+            strengthText.textContent = 'Password Strength: Strong';
+            strengthText.style.color = '#2ecc40';
+        }
+
+        // Check password match if confirm password is not empty
+        if (confirmPassword) {
+            checkPasswordMatch();
+        }
+    });
+
+    document.getElementById('confirm_password').addEventListener('input', checkPasswordMatch);
+
+    function checkPasswordMatch() {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm_password').value;
+        const matchIndicator = document.getElementById('match-indicator');
+        const matchText = document.getElementById('password-match-text');
+
+        matchIndicator.classList.remove('match', 'no-match');
+        
+        if (password === confirmPassword && password !== '') {
+            matchIndicator.classList.add('match');
+            matchText.textContent = 'Passwords match';
+            matchText.style.color = '#2ecc40';
+        } else {
+            matchIndicator.classList.add('no-match');
+            matchText.textContent = 'Passwords do not match';
+            matchText.style.color = '#ff4136';
+        }
+    }
+</script>
+
+<?php include('includes/scripts.php')?>
+<?php include('includes/layout-footer.php')?>

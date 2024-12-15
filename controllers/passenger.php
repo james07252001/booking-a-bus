@@ -42,7 +42,7 @@
             $this->first_name=$first_name;
             $this->last_name=$last_name;
             $this->email=$email;
-            $this->phone_number = $phone_number;
+            $this->phone_number=$phone_number;
             $this->address=$address;
             $this->password=$password;
 
@@ -137,7 +137,7 @@
         }
 
         private function createPassenger(){
-            $sql = "INSERT INTO ".$this->table_name." (first_name, last_name, email, phone_number, address, password, verification_code) VALUES (?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO ".$this->table_name." (first_name, last_name, email, phone_number, address, password, verification_code) VALUES (?, ?, ?, ?, ?, ?, ?)";
             $stmt = mysqli_stmt_init($this->conn);
             if(!mysqli_stmt_prepare($stmt, $sql)){
                 header("location: register.php?error=stmtfailed");
@@ -146,7 +146,7 @@
         
             $hashedPwd = password_hash($this->password, PASSWORD_DEFAULT);
         
-            mysqli_stmt_bind_param($stmt, "ssssss", $this->first_name, $this->last_name, $this->email, $this->phone_number, $this->address, $hashedPwd, $this->verification_code);
+            mysqli_stmt_bind_param($stmt, "sssssss", $this->first_name, $this->last_name, $this->email, $this-> phone_number, $this->address, $hashedPwd, $this->verification_code);
             mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
             header("location: login.php?signUp=passengerCreated");
