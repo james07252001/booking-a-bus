@@ -170,7 +170,7 @@
                             <input type="checkbox" class="custom-control-input" id="terms_accepted" name="terms_accepted">
                             <label class="custom-control-label" for="terms_accepted">
                                 I have read and agree to the 
-                                <a href="#" data-toggle="modal" data-target="#termsModal">Terms and Conditions</a>
+                                <a href="#" data-toggle="modal" data-target="#termsModal" styl="color: brown">Terms and Conditions</a>
                             </label>
                         </div>
                         <?php if(!empty($errors['terms'])): ?>
