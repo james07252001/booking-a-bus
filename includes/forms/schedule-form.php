@@ -123,3 +123,33 @@
     const schedule_date = document.getElementById("schedule_date");
     schedule_date.min = new Date().toISOString().split("T")[0];
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const originSelect = document.getElementById("route_from");
+        const destinationSelect = document.getElementById("route_to");
+
+        function updateDestinationOptions() {
+            const selectedOrigin = originSelect.value;
+
+            // Loop through destination options
+            Array.from(destinationSelect.options).forEach(option => {
+                if (option.value === selectedOrigin) {
+                    option.style.display = "none"; // Hide the matching option
+                } else {
+                    option.style.display = "block"; // Ensure other options are visible
+                }
+            });
+
+            // Reset the destination selection if it's hidden
+            if (destinationSelect.value === selectedOrigin) {
+                destinationSelect.value = "";
+            }
+        }
+
+        // Attach the event listener
+        originSelect.addEventListener("change", updateDestinationOptions);
+
+        // Initialize the state on page load
+        updateDestinationOptions();
+    });
+</script>
