@@ -19,6 +19,9 @@
     include('controllers/driver.php');
     $new_driver= new Driver($db);
 
+    include('controllers/conductor.php');
+    $new_conductor= new Conductor($db);
+
 
     include('controllers/vessel.php');
     $new_vessel = new Vessel($db);
@@ -92,157 +95,155 @@ if (substr($request, -4) == '.php') {
         </ul>
 
         <div class="tab-content" id="myTabContent">
-    <div class="tab-pane fade show active p-3" id="Pending" role="tabpanel" aria-labelledby="Pending-tab">
-        <div class="row">
-            <?php
-            foreach ($bookings as &$row) {
-                if ($row['payment_status'] == 'pending') {
-                    $route_from = $new_location->getById($row['route_from']);
-                    $route_to = $new_location->getById($row['route_to']);
-                    $bus = $new_bus->getById($row["bus_id"]);
-                    $driver = $new_driver->getById($row["driver_id"]);
-                    $conductor = $conductor->getById($row["conductor_id"]); // Retrieve conductor details
-                    $vessel = $new_vessel->getById($row["vessel_id"]);
-                    
-                    // Calculate discount
-                    $discount = 0;
-                    if ($row['passenger_type'] == 'student' || $row['passenger_type'] == 'senior' || $row['passenger_type'] == 'pwd') {
-                        $discount = 0.20; // 20% discount
-                    }
-                    $fare = $row['fare'];
-                    $discount_amount = $fare * $discount;
-                    $total = $fare - $discount_amount;
+            <div class="tab-pane fade show active p-3" id="Pending" role="tabpanel" aria-labelledby="Pending-tab">
+                <div class="row">
+                    <?php
+                    foreach ($bookings as &$row) {
+                        if ($row['payment_status'] == 'pending') {
+                            $route_from = $new_location->getById($row['route_from']);
+                            $route_to = $new_location->getById($row['route_to']);
+                            $bus = $new_bus->getById($row["bus_id"]);
+                            $driver = $new_driver->getById($row["driver_id"]);
+                            $conductor = $new_conductor->getById($row["conductor_id"]);
+                            $vessel = $new_vessel->getById($row["vessel_id"]);
+                            
+                            // Calculate discount
+                            $discount = 0;
+                            if ($row['passenger_type'] == 'student' || $row['passenger_type'] == 'senior' || $row['passenger_type'] == 'pwd') {
+                                $discount = 0.20; // 20% discount
+                            }
+                            $fare = $row['fare'];
+                            $discount_amount = $fare * $discount;
+                            $total = $fare - $discount_amount;
 
-                    // Luggage fee calculation
-                    $luggage_count = $row['luggage_count'];
-                    $luggage_fee = $luggage_count * 30; // 30 per luggage
-                    $total_with_luggage = $total + $luggage_fee; // Add luggage fee to total
+                            // Luggage fee calculation
+                            $luggage_count = $row['luggage_count'];
+                            $luggage_fee = $luggage_count * 30; // 30 per luggage
+                            $total_with_luggage = $total + $luggage_fee; // Add luggage fee to total
 
-                    // Determine the color and capitalize passenger type
-                    $passengerType = ucfirst($row['passenger_type']); // Capitalize first letter
-                    $color = '';
-                    switch ($row['passenger_type']) {
-                        case 'regular':
-                            $color = 'chocolate';
-                            break;
-                        case 'student':
-                            $color = 'deeppink';
-                            break;
-                        case 'senior':
-                            $color = 'orangered';
-                            break;
-                        case 'pwd':
-                            $color = 'red';
-                            break;
-                        default:
-                            $color = 'black'; // Fallback color
-                    }
-            ?>
-                <div class="col-12 col-md-4 mb-3"> <!-- Adjusted to col-12 for mobile -->
-                    <div class="border bg-light">
-                        <div id="<?php echo 'print_'.$row['book_id'] ?>">
-                            <div class="bg-primary p-3">
-                                <h4 class="mb-0">
-                                    <?php echo $route_from["location_name"].' &#x2192; '.$route_to["location_name"] ?>
-                                </h4>
-                            </div>
-                            <div class="p-3" style="background-image: linear-gradient( 109.6deg,  rgba(254,253,205,1) 11.2%, rgba(163,230,255,1) 91.1% );">
-                                <p class="mb-0 d-flex align-items-center justify-content-between">
-                                    <span class="text-muted">Booked Date:</span>
-                                    <span class="font-weight-bold"><?php echo date_format(date_create($row['book_date']), 'F j, Y') ?></span>
-                                </p>
-                                <hr>
-                                <p class="mb-0 d-flex align-items-center justify-content-between">
-                                    <span class="text-muted">Reference:</span>
-                                    <span class="font-weight-bold"><?php echo $row['book_reference'] ?></span>
-                                </p>
-                                <p class="mb-0 d-flex align-items-center justify-content-between">
-                                    <span class="text-muted">Passenger:</span>
-                                    <span class="font-weight-bold"><?php echo $passenger['first_name'].' '. $passenger['last_name'] ?></span>
-                                </p>
-                                <p class="mb-0 d-flex align-items-center justify-content-between">
-                                    <span class="text-muted">Passenger Type:</span>
-                                    <span class="font-weight-bold" style="color: <?php echo $color; ?>;">
-                                        <?php echo $passengerType; ?>
-                                    </span>
-                                </p>
-                                <p class="mb-0 d-flex align-items-center justify-content-between">
-                                    <span class="text-muted">Bus Name:</span>
-                                    <span class="font-weight-bold"><?php echo $bus['bus_num'] ?></span>
-                                </p>
-                                <p class="mb-0 d-flex align-items-center justify-content-between">
-                                    <span class="text-muted">Bus Number:</span>
-                                    <span class="font-weight-bold"><?php echo $bus['bus_code'] ?></span>
-                                </p>
-                                <p class="d-flex align-items-center justify-content-between mb-0">
-                                    <span class="text-muted d-block">Bus Driver Number:</span>
-                                    <strong class="text-uppercase"><?php echo $driver['phone'] ?></strong>
-                                </p>
-                                <p class="d-flex align-items-center justify-content-between mb-0">
-                                    <span class="text-muted d-block">Conductor Number:</span>
-                                    <strong class="text-uppercase"><?php echo $conductor['phone'] ?></strong>
-                                </p>
-                                <p class="mb-0 d-flex align-items-center justify-content-between">
-                                    <span class="text-muted">Bus Type:</span>
-                                    <span class="font-weight-bold"><?php echo $bus['bus_type'] ?></span>
-                                </p>
-                                <p class="mb-0 d-flex align-items-center justify-content-between">
-                                    <span class="text-muted">Seat Number:</span>
-                                    <span class="font-weight-bold"><?php echo $row['seat_num'] ?></span>
-                                </p>
-                                <p class="mb-0 d-flex align-items-center justify-content-between">
-                                    <span class="text-muted">Luggage Count:</span>
-                                    <span class="font-weight-bold"><?php echo $luggage_count ?></span>
-                                </p>
-                                <p class="mb-0 d-flex align-items-center justify-content-between">
-                                    <span class="text-muted">Status:</span>
-                                    <span class="font-weight-bold text-uppercase badge badge-success">
-                                        <?php echo $row['payment_status'] ?>
-                                    </span>
-                                </p>
-                                <p class="mb-0 d-flex align-items-center justify-content-between">
-                                    <span class="text-muted">Schedule Date:</span>
-                                    <span class="font-weight-bold"><?php echo date_format(date_create($row['schedule_date']), 'F j, Y') ?></span>
-                                </p>
-                                <p class="mb-0 d-flex align-items-center justify-content-between">
-                                    <span class="text-muted">Departure Time:</span>
-                                    <span class="font-weight-bold"><?php echo date_format(date_create($row["departure"]), 'g:i A') ?></span>
-                                </p>
-                                <p class="mb-0 d-flex align-items-center justify-content-between">
-                                    <span class="text-muted">Arrival Time:</span>
-                                    <span class="font-weight-bold"><?php echo date_format(date_create($row["arrival"]), 'g:i A') ?></span>
-                                </p>
-                                <p class="d-flex align-items-center justify-content-between mb-0">
-                                    <span class="text-muted d-block">Fare:</span>
-                                    <strong><?php echo number_format($fare, 2) ?></strong>
-                                </p>
-                                <p class="mb-0 d-flex align-items-center justify-content-between">
-                                    <span class="text-muted">Luggage Fee:</span>
-                                    <span class="font-weight-bold"><?php echo number_format($luggage_fee, 2) ?></span>
-                                </p>
-                                <p class="d-flex align-items-center justify-content-between mb-0">
-                                    <span class="text-muted d-block">Discount Amount:</span>
-                                    <strong><?php echo number_format($discount_amount, 2) ?></strong>
-                                </p>
-                                <p class="d-flex align-items-center justify-content-between mb-0">
-                                    <span class="text-muted d-block">Total:</span>
-                                    <strong><?php echo number_format($total_with_luggage, 2) ?></strong> <!-- Total with luggage fee -->
-                                </p>
+                            // Determine the color and capitalize passenger type
+                            $passengerType = ucfirst($row['passenger_type']); // Capitalize first letter
+                            $color = '';
+                            switch ($row['passenger_type']) {
+                                case 'regular':
+                                    $color = 'chocolate';
+                                    break;
+                                case 'student':
+                                    $color = 'deeppink';
+                                    break;
+                                case 'senior':
+                                    $color = 'orangered';
+                                    break;
+                                case 'pwd':
+                                    $color = 'red';
+                                    break;
+                                default:
+                                    $color = 'black'; // Fallback color
+                            }
+                    ?>
+                        <div class="col-12 col-md-4 mb-3"> <!-- Adjusted to col-12 for mobile -->
+                            <div class="border bg-light">
+                                <div id="<?php echo 'print_'.$row['book_id'] ?>">
+                                    <div class="bg-primary p-3">
+                                        <h4 class="mb-0">
+                                            <?php echo $route_from["location_name"].' &#x2192; '.$route_to["location_name"] ?>
+                                        </h4>
+                                    </div>
+                                    <div class="p-3" style="background-image: linear-gradient( 109.6deg,  rgba(254,253,205,1) 11.2%, rgba(163,230,255,1) 91.1% );">
+                                        <p class="mb-0 d-flex align-items-center justify-content-between">
+                                            <span class="text-muted">Booked Date:</span>
+                                            <span class="font-weight-bold"><?php echo date_format(date_create($row['book_date']), 'F j, Y') ?></span>
+                                        </p>
+                                        <hr>
+                                        <p class="mb-0 d-flex align-items-center justify-content-between">
+                                            <span class="text-muted">Reference:</span>
+                                            <span class="font-weight-bold"><?php echo $row['book_reference'] ?></span>
+                                        </p>
+                                        <p class="mb-0 d-flex align-items-center justify-content-between">
+                                            <span class="text-muted">Passenger:</span>
+                                            <span class="font-weight-bold"><?php echo $passenger['first_name'].' '. $passenger['last_name'] ?></span>
+                                        </p>
+                                        <p class="mb-0 d-flex align-items-center justify-content-between">
+                                            <span class="text-muted">Passenger Type:</span>
+                                            <span class="font-weight-bold" style="color: <?php echo $color; ?>;"><?php echo $passengerType; ?></span>
+                                        </p>
+                                        <p class="mb-0 d-flex align-items-center justify-content-between">
+                                            <span class="text-muted">Bus Name:</span>
+                                            <span class="font-weight-bold"><?php echo $bus['bus_num'] ?></span>
+                                        </p>
+                                        <p class="mb-0 d-flex align-items-center justify-content-between">
+                                            <span class="text-muted">Bus Number:</span>
+                                            <span class="font-weight-bold"><?php echo $bus['bus_code'] ?></span>
+                                        </p>
+                                        <p class="d-flex align-items-center justify-content-between mb-0">
+                                            <span class="text-muted d-block">Bus Driver Number:</span>
+                                            <strong class="text-uppercase"><?php echo $driver['phone'] ?></strong>
+                                        </p>
+                                        <p class="d-flex align-items-center justify-content-between mb-0">
+                                            <span class="text-muted d-block">Conductor Number:</span>
+                                            <strong class="text-uppercase"><?php echo $conductor['phone'] ?></strong>
+                                        </p>
+                                        <p class="mb-0 d-flex align-items-center justify-content-between">
+                                            <span class="text-muted">Bus Type:</span>
+                                            <span class="font-weight-bold"><?php echo $bus['bus_type'] ?></span>
+                                        </p>
+                                        <p class="mb-0 d-flex align-items-center justify-content-between">
+                                            <span class="text-muted">Seat Number:</span>
+                                            <span class="font-weight-bold"><?php echo $row['seat_num'] ?></span>
+                                        </p>
+                                        <p class="mb-0 d-flex align-items-center justify-content-between">
+                                            <span class="text-muted">Luggage Count:</span>
+                                            <span class="font-weight-bold"><?php echo $luggage_count ?></span>
+                                        </p>
+                                        <p class="mb-0 d-flex align-items-center justify-content-between">
+                                            <span class="text-muted">Status:</span>
+                                            <span class="font-weight-bold text-uppercase badge badge-success"><?php echo $row['payment_status'] ?></span>
+                                        </p>
+                                        <p class="mb-0 d-flex align-items-center justify-content-between">
+                                            <span class="text-muted">Schedule Date:</span>
+                                            <span class="font-weight-bold"><?php echo date_format(date_create($row['schedule_date']), 'F j, Y') ?></span>
+                                        </p>
+                                        <p class="mb-0 d-flex align-items-center justify-content-between">
+                                            <span class="text-muted">Departure Time:</span>
+                                            <span class="font-weight-bold"><?php echo date_format(date_create($row["departure"]), 'g:i A') ?></span>
+                                        </p>
+                                        <p class="mb-0 d-flex align-items-center justify-content-between">
+                                            <span class="text-muted">Arrival Time:</span>
+                                            <span class="font-weight-bold"><?php echo date_format(date_create($row["arrival"]), 'g:i A') ?></span>
+                                        </p>
+                                        <p class="d-flex align-items-center justify-content-between mb-0">
+                                            <span class="text-muted d-block">Fare:</span>
+                                            <strong><?php echo number_format($fare, 2) ?></strong>
+                                        </p>
+                                        <p class="mb-0 d-flex align-items-center justify-content-between">
+                                            <span class="text-muted">Luggage Fee:</span>
+                                            <span class="font-weight-bold"><?php echo number_format($luggage_fee, 2) ?></span>
+                                        </p>
+
+                                        <p class="d-flex align-items-center justify-content-between mb-0">
+                                            <span class="text-muted d-block">Discount Amount:</span>
+                                            <strong><?php echo number_format($discount_amount, 2) ?></strong>
+                                        </p>
+                                        <p class="d-flex align-items-center justify-content-between mb-0">
+                                            <span class="text-muted d-block">Total:</span>
+                                            <strong><?php echo number_format($total_with_luggage, 2) ?></strong> <!-- Total with luggage fee -->
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="p-3">
+                                    <button class="btn btn-sm btn-danger w-100" onclick="cancelBook('<?php echo $row['book_id'] ?>')">Cancel</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="p-3">
-                            <button class="btn btn-sm btn-danger w-100" onclick="cancelBook('<?php echo $row['book_id'] ?>')">Cancel</button>
-                        </div>
-                    </div>
+                    <?php
+                        }
+                    }
+                    ?>
                 </div>
-            <?php
-                }
-            }
-            ?>
+            </div>
         </div>
     </div>
 </div>
-
 
 <style>
     /* Custom mobile styles */
