@@ -86,7 +86,7 @@
 
 <main>
     <div class="container mt-3 main-container">
-        <div class="w-100 m-auto bg-white shadow-sm" style="max-width: 600px">
+        <div class="w-100 m-auto bg-white shadow-sm" style="max-width: 500px">
             <div class="bg-primary p-3">
                 <h1 class="text-center">Create an Account</h1>
             </div>
@@ -245,7 +245,7 @@ body {
 .main-container {
     position: relative;
     border: 10px solid transparent; /* Invisible border */
-    padding: 15px; /* Adjust padding */
+    padding: 5px; /* Adjust padding */
     background: rgba(255, 255, 255, 0); /* Optional: Transparent background */
     box-shadow: 0 0 5px 2px rgba(0, 255, 0, 0.8); /* LED effect (green light) */
     animation: ledEffect 1.5s infinite alternate; /* Animated LED effect */
