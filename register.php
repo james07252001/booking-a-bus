@@ -85,7 +85,7 @@
 ?>
 
 <main>
-    <div class="container mt-3">
+    <div class="container mt-3 main-container">
         <div class="w-100 m-auto bg-white shadow-sm" style="max-width: 500px">
             <div class="bg-primary p-3">
                 <h1 class="text-center">Create an Account</h1>
@@ -232,6 +232,19 @@
 </main>
 
 <style>
+
+body {
+    background-image: url('assets/img/bantayanplaza.png');
+    background-size: cover; /* Ensures the image covers the entire page */
+    background-position: center; /* Centers the background image */
+    background-attachment: fixed; /* Keeps the image fixed when scrolling */
+    color: #fff; /* Adjust text color if needed */
+}
+
+.main-container {
+    background: rgba(255, 255, 255, 0.8); /* Optional: Add a transparent background for content readability */
+}
+
     .password-strength-bar .strength-segment,
     .password-match-bar .match-segment {
         height: 5px;
