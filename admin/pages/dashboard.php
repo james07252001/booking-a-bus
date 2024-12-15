@@ -373,7 +373,7 @@ if (substr($request, -4) == '.php') {
 
 <div class="row mt-4" style="background-color: #4158D0;
 background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%);
- width: 1200px; margin-left: 2px; height: 600px; border: 5px;">
+ width: 1200px; margin-left: 2px; height: 600px;">
     <div class="col-md-6">
         <canvas id="passengerChart"></canvas>
         <script>
