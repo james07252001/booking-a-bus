@@ -584,7 +584,7 @@ var bookingChart = new Chart(ctx, {
             },
             y: {
                 ticks: {
-                    color: 'white' // Set the color of the y-axis labels to white (optional)
+                    color: 'black' // Set the color of the y-axis labels to white (optional)
                 },
                 grid: {
                     color: 'gray' // Set the color of the y-axis grid lines to white (optional)
