@@ -443,7 +443,9 @@ if (substr($request, -4) == '.php') {
                 'name' => 'Unknown Driver'
             ]; // Default values if driver details are missing
         }
-                    
+        
+                $conductor = $new_conductor->getById($row["conductor_id"]);
+
                     // Calculate discount
                     $discount = 0;
                     if ($row['passenger_type'] == 'student' || $row['passenger_type'] == 'senior' || $row['passenger_type'] == 'pwd') {
@@ -516,6 +518,10 @@ if (substr($request, -4) == '.php') {
                                         <span class="text-muted d-block">Bus Driver Number:</span>
                                         <strong class="text-uppercase"><?php echo $driver['phone'] ?></strong>
                                     </p>
+                                    <p class="d-flex align-items-center justify-content-between mb-0">
+                                            <span class="text-muted d-block">Conductor Number:</span>
+                                            <strong class="text-uppercase"><?php echo $conductor['phone'] ?></strong>
+                                        </p>
                                     <p class="mb-0 d-flex align-items-center justify-content-between">
                                         <span class="text-muted">Bus Type:</span>
                                         <span class="font-weight-bold"><?php echo $bus['bus_type'] ?></span>
