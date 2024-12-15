@@ -8,11 +8,10 @@ if (isset($_SESSION["userId"])) {
 
 if (isset($_POST["forget-pass-submit"])) {
     $selector = bin2hex(random_bytes(8));
-    $shortToken = bin2hex(random_bytes(8)); // Shorter token for URL
-    $longToken = random_bytes(32); // Full-length token for storage
+    $token = random_bytes(32);
 
     $root_url = 'https://bantayanbusbooking.com/';
-    $url = $root_url . "/create-new-password.php?selector=" . $selector . "&validator=" . $shortToken;
+    $url = $root_url . "/create-new-password.php?selector=" . $selector . "&validator=" . bin2hex($token);
 
     $expires = date("U") + 1800;
 
@@ -25,6 +24,7 @@ if (isset($_POST["forget-pass-submit"])) {
     $result = mysqli_query($db, $checkTableSql);
 
     if (mysqli_num_rows($result) == 0) {
+        // Table does not exist, create it
         $createTableSql = "
             CREATE TABLE pwdReset (
                 id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -69,7 +69,7 @@ if (isset($_POST["forget-pass-submit"])) {
         echo 'There was an error! ' . mysqli_error($db);
         exit();
     } else {
-        $hashedToken = password_hash($longToken, PASSWORD_DEFAULT);
+        $hashedToken = password_hash($token, PASSWORD_DEFAULT);
         mysqli_stmt_bind_param($stmt, "ssss", $userEmail, $selector, $hashedToken, $expires);
         mysqli_stmt_execute($stmt);
     }
@@ -80,9 +80,8 @@ if (isset($_POST["forget-pass-submit"])) {
     $to = $userEmail;
 
     $subject = 'Reset password';
-    $message = '<p>We received a password reset request. Click the link below to reset your password:</p>';
-    $message .= '<p><a href="' . $url . '" target="_blank">Reset Password</a></p>';
-    $message .= '<p>If you did not request this, please ignore this email.</p>';
+    $message = '<p>We received a password reset request. Click the reset password button below to reset your password.</p>';
+    $message .= '<a href="' . $url . '" target="_blank">Reset Password</a>';
 
     $headers  = 'MIME-Version: 1.0' . "\r\n";
     $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
@@ -92,6 +91,7 @@ if (isset($_POST["forget-pass-submit"])) {
     header("location: forget-password.php?reset=success");
 }
 
+// Redirect from .php URLs to remove the extension
 $request = $_SERVER['REQUEST_URI'];
 if (substr($request, -4) == '.php') {
     $new_url = substr($request, 0, -4);
@@ -99,7 +99,6 @@ if (substr($request, -4) == '.php') {
     exit();
 }
 ?>
-
 
 <style>
     .btn-glow {
