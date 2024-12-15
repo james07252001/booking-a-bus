@@ -430,6 +430,38 @@ $("#delete_route_form").submit(function(event) {
         }
     });
 });
+</script>
+<script>
+    // Function to filter "Route To" dropdown based on "Route From"
+function filterRouteTo(fromSelector, toSelector) {
+    const selectedFrom = $(fromSelector).val();
+    const options = $(toSelector + ' option');
+
+    // Show all options initially
+    options.each(function() {
+        $(this).show();
+    });
+
+    // Hide the selected "Route From" in "Route To"
+    if (selectedFrom) {
+        $(toSelector + ' option[value="' + selectedFrom + '"]').hide();
+    }
+}
+
+// Attach event listeners for "Route From" changes
+$(document).on('change', '#route_from', function() {
+    filterRouteTo('#route_from', '#route_to');
+});
+
+$(document).on('change', '#route_from_u', function() {
+    filterRouteTo('#route_from_u', '#route_to_u');
+});
+
+// Initial filtering on modal open
+$('#newRouteModal, #routeEditModal').on('show.bs.modal', function() {
+    filterRouteTo('#route_from', '#route_to');
+    filterRouteTo('#route_from_u', '#route_to_u');
+});
 
 </script>
 <?php include('includes/scripts.php')?>
