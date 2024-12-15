@@ -238,7 +238,7 @@ body {
     background-size: cover; /* Ensures the image covers the entire page */
     background-position: center; /* Centers the background image */
     background-attachment: fixed; /* Keeps the image fixed when scrolling */
-    color: #fff; /* Adjust text color if needed */
+    color: black; /* Adjust text color if needed */
 }
 
 .main-container {
