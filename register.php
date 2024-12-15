@@ -56,24 +56,9 @@ if (isset($_POST["sign-up-submit"])) {
 
         // Attempt to create a new user
         if ($new_passenger->create($first_name, $last_name, $email, $phone_number, $address, $hashed_password)) {
-           // Generate selector and token
-           $selector = bin2hex(random_bytes(8));
-           $token = random_bytes(32);
-           $validator = bin2hex($token);
-
-           $expires = date("U") + 3600; // 1 hour expiry
-
-           // Store the reset token in the database
-           $sql = "INSERT INTO pwdReset (pwdResetEmail, pwdResetSelector, pwdResetToken, pwdResetExpires) VALUES (?, ?, ?, ?)";
-           $stmt = $db->prepare($sql);
-           $hashed_token = password_hash($token, PASSWORD_DEFAULT);
-           $stmt->bind_param("ssss", $email, $selector, $hashed_token, $expires);
-           $stmt->execute();
-
-           // Redirect to create-new-password.php
-           header("Location: create-new-password.php?selector=$selector&validator=$validator");
-           exit;
-       } else {
+            header("Location: success.php");
+            exit;
+        } else {
             $error = "Failed to create account. Please try again.";
         }
     }
