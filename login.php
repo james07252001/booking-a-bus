@@ -153,7 +153,7 @@
                 title: 'Login Successfully',
                 icon: 'success',
                 confirmButtonText: 'OK',
-                timer: 3000,
+                timer: 5000,
                 timerProgressBar: true
             }).then(() => {
                 // Optional: Redirect to the account page after alert
