@@ -277,6 +277,7 @@ if (substr($request, -4) == '.php') {
                     $route_to = $new_location->getById($row['route_to']);
                     $bus = $new_bus->getById($row["bus_id"]);
                     $driver = $new_driver->getById($row["driver_id"]);
+                    $conductor = $new_conductor->getById($row["conductor_id"]);
                     $vessel = $new_vessel->getById($row["vessel_id"]);
                     
                     // Calculate discount
@@ -350,6 +351,10 @@ if (substr($request, -4) == '.php') {
                                     <p class="d-flex align-items-center justify-content-between mb-0">
                                         <span class="text-muted d-block">Bus Driver Number:</span>
                                         <strong class="text-uppercase"><?php echo $driver['phone'] ?></strong>
+                                    </p>
+                                    <p class="d-flex align-items-center justify-content-between mb-0">
+                                        <span class="text-muted d-block">Conductor Number:</span>
+                                        <strong class="text-uppercase"><?php echo $conductor['phone'] ?></strong>
                                     </p>
                                     <p class="mb-0 d-flex align-items-center justify-content-between">
                                         <span class="text-muted">Bus Type:</span>
