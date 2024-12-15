@@ -1,6 +1,11 @@
 <?php 
     include('includes/layout-header.php');
     
+    // Start session if not already started
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+
     if(isset($_SESSION["userId"])){
         header("location: account.php");
         exit;
@@ -12,7 +17,37 @@
     $database = new Database();
     $db = $database->getConnection();
 
+    // Initialize login attempts tracking
+    if (!isset($_SESSION['login_attempts'])) {
+        $_SESSION['login_attempts'] = 0;
+    }
+    if (!isset($_SESSION['last_login_attempt'])) {
+        $_SESSION['last_login_attempt'] = 0;
+    }
+
+    // Check if account is temporarily locked
+    $is_locked = false;
+    if ($_SESSION['login_attempts'] >= 3) {
+        $lock_duration = 30; // 30 seconds lockout
+        $time_since_last_attempt = time() - $_SESSION['last_login_attempt'];
+        
+        if ($time_since_last_attempt < $lock_duration) {
+            $is_locked = true;
+            $remaining_time = $lock_duration - $time_since_last_attempt;
+        } else {
+            // Reset attempts after lockout period
+            $_SESSION['login_attempts'] = 0;
+            $_SESSION['last_login_attempt'] = 0;
+        }
+    }
+
     if(isset($_POST["sign-in-submit"])){
+        // Check if account is locked
+        if ($is_locked) {
+            header("Location: login.php?signin=locked&time={$remaining_time}");
+            exit;
+        }
+
         // Verify reCAPTCHA
         $recaptcha_secret = "6LfXi5wqAAAAADx-yGAWdeuB5VcJwNu-KGXHHetM"; // Replace with your actual secret key
         $response = $_POST['g-recaptcha-response'];
@@ -30,7 +65,23 @@
         $email = $_POST["email"];
         $password = $_POST["password"];
         
-        $new_passenger->login($email, $password);
+        $login_result = $new_passenger->login($email, $password);
+
+        if (!$login_result) {
+            // Login failed
+            $_SESSION['login_attempts']++;
+            $_SESSION['last_login_attempt'] = time();
+
+            if ($_SESSION['login_attempts'] >= 3) {
+                // Redirect with locked status
+                header("Location: login.php?signin=locked&time=30");
+            } else {
+                // Redirect with login fail status and remaining attempts
+                $remaining_attempts = 3 - $_SESSION['login_attempts'];
+                header("Location: login.php?signin=fail&attempts={$remaining_attempts}");
+            }
+            exit;
+        }
     }
 ?>
 
@@ -59,9 +110,10 @@
                         }
                     }else if(isset($_GET["signin"])){
                         if($_GET["signin"] == "fail"){
+                            $remaining_attempts = isset($_GET['attempts']) ? intval($_GET['attempts']) : 0;
                             ?>
                                 <div class="alert alert-danger" role="alert">
-                                    Invalid email or password.
+                                    Invalid email or password. You have <?php echo $remaining_attempts; ?> attempt(s) left.
                                 </div>
                             <?php
                         } else if($_GET["signin"] == "captcha"){
@@ -70,22 +122,35 @@
                                     reCAPTCHA verification failed. Please try again.
                                 </div>
                             <?php
+                        } else if($_GET["signin"] == "locked"){
+                            $remaining_time = isset($_GET['time']) ? intval($_GET['time']) : 30;
+                            ?>
+                                <div class="alert alert-danger" role="alert">
+                                    Too many failed attempts. Please wait <?php echo $remaining_time; ?> seconds before trying again.
+                                </div>
+                            <?php
                         }
                     }
                 ?>
 
-                <form method="POST" action="" id="login-form">
+                <form method="POST" action="" id="login-form" 
+                    <?php echo $is_locked ? 'onsubmit="return false;"' : ''; ?>>
                     <div class="form-group">
                         <label for="email">Email address</label>
-                        <input type="email" class="form-control" id="email" name="email" required />
+                        <input type="email" class="form-control" id="email" name="email" 
+                            <?php echo $is_locked ? 'disabled' : 'required'; ?> />
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required />
+                        <input type="password" class="form-control" id="password" name="password" 
+                            <?php echo $is_locked ? 'disabled' : 'required'; ?> />
                         <a href="forget-password.php">Forgot password?</a>
                     </div>
                     <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
-                    <button type="submit" class="btn btn-block btn-dark" name="sign-in-submit">Login</button>
+                    <button type="submit" class="btn btn-block btn-dark" name="sign-in-submit"
+                        <?php echo $is_locked ? 'disabled' : ''; ?>>
+                        Login
+                    </button>
 
                     <div class="text-center">
                         <span>Not register yet? </span>
@@ -108,6 +173,27 @@
             document.getElementById('g-recaptcha-response').value = token;
         });
     });
+
+    <?php if ($is_locked): ?>
+    // Countdown timer for account unlock
+    function startCountdown() {
+        let remainingTime = <?php echo $remaining_time; ?>;
+        const countdownElement = document.createElement('div');
+        countdownElement.classList.add('text-danger', 'mt-2', 'text-center');
+        document.getElementById('login-form').appendChild(countdownElement);
+
+        const timer = setInterval(() => {
+            if (remainingTime > 0) {
+                countdownElement.textContent = `Please wait ${remainingTime} seconds`;
+                remainingTime--;
+            } else {
+                clearInterval(timer);
+                location.reload(); // Reload page to reset form
+            }
+        }, 1000);
+    }
+    startCountdown();
+    <?php endif; ?>
 </script>
 
-<?php include('includes/layout-footer.php')?>
+<?php include('includes/layout-footer.php'); ?>
