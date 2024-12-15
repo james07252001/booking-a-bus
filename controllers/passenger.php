@@ -72,37 +72,66 @@ class Passenger
         exit();
     }
 
-    public function login($email, $password)
-    {
-        $this->password = $password;
+    public function login($email_or_phone, $password)
+{
+    $this->password = $password;
 
-        // Validate the email
-        $userData = $this->isEmailExist($email);
-
-        if ($userData === false) {
-            header("location: login.php?signin=fail");
-            exit();
-        }
-
-        $checkPwd = password_verify($this->password, $userData['password']);
-
-        if ($checkPwd === false) {
-            header("location: login.php?signin=fail");
-            exit();
-        } elseif ($checkPwd === true) {
-            session_start();
-
-            $_SESSION["userId"] = $userData['id'];
-            $_SESSION["userFname"] = $userData['first_name'];
-            $_SESSION["userLname"] = $userData['last_name'];
-            $_SESSION["userEmail"] = $userData['email'];
-            $_SESSION["userPhone"] = $userData['phone_number'];
-            $_SESSION["isVerified"] = ($userData['email_verified_at'] !== '0000-00-00 00:00:00');
-
-            header("location: account.php");
-            exit();
-        }
+    // Check if the input is an email or phone number
+    if (filter_var($email_or_phone, FILTER_VALIDATE_EMAIL)) {
+        $userData = $this->isEmailExist($email_or_phone);
+    } else {
+        $userData = $this->isPhoneExist($email_or_phone);
     }
+
+    if ($userData === false) {
+        header("location: login.php?signin=fail");
+        exit();
+    }
+
+    $checkPwd = password_verify($this->password, $userData['password']);
+
+    if ($checkPwd === false) {
+        header("location: login.php?signin=fail");
+        exit();
+    } elseif ($checkPwd === true) {
+        session_start();
+
+        $_SESSION["userId"] = $userData['id'];
+        $_SESSION["userFname"] = $userData['first_name'];
+        $_SESSION["userLname"] = $userData['last_name'];
+        $_SESSION["userEmail"] = $userData['email'];
+        $_SESSION["userPhone"] = $userData['phone_number'];
+        $_SESSION["isVerified"] = ($userData['email_verified_at'] !== '0000-00-00 00:00:00');
+
+        header("location: account.php");
+        exit();
+    }
+}
+
+public function isPhoneExist($phone_number)
+{
+    $sql = "SELECT * FROM " . $this->table_name . " WHERE phone_number = ?";
+    $stmt = mysqli_stmt_init($this->conn);
+
+    if (!mysqli_stmt_prepare($stmt, $sql)) {
+        header("location: register.php?error=stmtfailed");
+        exit();
+    }
+
+    mysqli_stmt_bind_param($stmt, "s", $phone_number);
+    mysqli_stmt_execute($stmt);
+
+    $resultData = mysqli_stmt_get_result($stmt);
+
+    if ($row = mysqli_fetch_assoc($resultData)) {
+        return $row;
+    } else {
+        return false;
+    }
+
+    mysqli_stmt_close($stmt);
+}
+
 
     public function isEmailExist($email)
     {
@@ -175,3 +204,4 @@ class Passenger
     }
 }
 ?>
+    
