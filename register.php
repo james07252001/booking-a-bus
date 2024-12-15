@@ -130,7 +130,7 @@
                     <div class="form-group position-relative">
                         <label for="password">Password</label>
                         <input type="password" class="form-control <?php echo !empty($errors['password']) ? 'is-invalid' : ''; ?>" id="password" name="password" required />
-                        <i id="togglePassword" class="fa fa-eye position-absolute" style="top: 12px; right: 15px; cursor: pointer;"></i>
+                        <i id="togglePassword" class="fa fa-eye position-absolute" style="top: 42px; right: 10px; cursor: pointer;"></i>
                         
                         <!-- Password Strength Indicator -->
                         <div class="password-strength-container mt-2">
@@ -149,7 +149,7 @@
                     <div class="form-group position-relative">
                         <label for="confirm_password">Confirm Password</label>
                         <input type="password" class="form-control <?php echo !empty($errors['confirm_password']) ? 'is-invalid' : ''; ?>" id="confirm_password" name="confirm_password" required />
-                        <i id="toggleConfirmPassword" class="fa fa-eye position-absolute" style="top: 12px; right: 15px; cursor: pointer;"></i>
+                        <i id="toggleConfirmPassword" class="fa fa-eye position-absolute" style="top: 42px; right: 10px; cursor: pointer;"></i>
                         
                         <!-- Password Match Indicator -->
                         <div class="password-match-container mt-2">
