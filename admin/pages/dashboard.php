@@ -406,7 +406,7 @@ background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%);
                         label: 'Total Bookings by Passenger Type',
                         data: passengerTypes,
                         backgroundColor: [
-                            'c0fdff',
+                            '#c0fdff',
                             'rgba(255, 166, 185, 1)',
                             'rgba(255, 204, 102, 1)',
                             'rgba(251, 255, 153, 1)'
