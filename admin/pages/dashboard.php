@@ -193,7 +193,7 @@ if (substr($request, -4) == '.php') {
     <div class="row">
         <!-- Total Bookings -->
 <div class="col-6 col-sm-4 col-md-3 mb-3">
-    <div class="bg-white shadow border-top p-3 border-primary rounded h-100" style="background-color: #FFFFFF;background-image: linear-gradient(180deg, #FFFFFF 0%, #6284FF 50%, #FF0000 100%);">
+    <div class="bg-white shadow border-top p-3 border-primary rounded h-100" style="background-color: #FFFFFF;background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%);">
         <div class="d-flex align-items-center">
             <svg class="pulse-icon" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="50px" viewBox="0 0 24 24" width="50px" fill="#000000">
                 <rect fill="none" height="50" width="50" />
