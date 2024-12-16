@@ -22,7 +22,12 @@ if (count($_POST) > 0) {
             if (mysqli_query($conn, $sql)) {
                 echo json_encode(array("statusCode" => 200));
             } else {
-                echo json_encode(array("statusCode" => 500, "title" => "Database Error: Unable to add new bus."));
+                // Improved error handling for database insert errors
+                if (mysqli_errno($conn) == 1062) { // MySQL error code for duplicate entry
+                    echo json_encode(array("statusCode" => 500, "title" => "Bus number already exists."));
+                } else {
+                    echo json_encode(array("statusCode" => 500, "title" => "Database Error: Unable to add new bus."));
+                }
             }
             break;
 
@@ -44,6 +49,7 @@ if (count($_POST) > 0) {
             if (mysqli_query($conn, $sql)) {
                 echo json_encode(array("statusCode" => 200));
             } else {
+                // Improved error handling for database update errors
                 echo json_encode(array("statusCode" => 500, "title" => "Database Error: Unable to update bus."));
             }
             break;
@@ -55,6 +61,7 @@ if (count($_POST) > 0) {
             if (mysqli_query($conn, $sql)) {
                 echo json_encode(array("statusCode" => 200, "id" => $id));
             } else {
+                // Error handling for deletion failures
                 echo json_encode(array("statusCode" => 500, "title" => "Database Error: Unable to delete bus."));
             }
             break;
@@ -63,5 +70,24 @@ if (count($_POST) > 0) {
             echo json_encode(array("statusCode" => 400, "title" => "Invalid request type."));
     }
     mysqli_close($conn);
+}
+
+function isBusExist($conn, $bus_code, $id = null) {
+    // Check if the bus code already exists (for add or update operations)
+    $query = "SELECT `id` FROM `tblbus` WHERE `bus_code` = ?";
+    $params = [$bus_code];
+
+    // Exclude the current ID when updating
+    if ($id !== null) {
+        $query .= " AND `id` != ?";
+        $params[] = $id;
+    }
+
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param(str_repeat("s", count($params)), ...$params);
+    $stmt->execute();
+    $stmt->store_result();
+
+    return $stmt->num_rows > 0;
 }
 ?>

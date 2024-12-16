@@ -252,27 +252,51 @@ $("#bus_form").submit(function(event) {
         return;
     }
 
-    var data = $("#bus_form").serialize();
-
+    // AJAX call to check duplicate bus number
     $.ajax({
-        data: data,
-        type: "post",
-        url: "backend/bus.php",
-        success: function(dataResult) {
-            var dataResult = JSON.parse(dataResult);
-            if (dataResult.statusCode == 200) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: 'New bus added successfully!',
-                }).then(() => {
-                    location.reload();
-                });
-            } else {
+        type: "POST",
+        url: "backend/check_bus_number.php",
+        data: { bus_num: busNum },
+        success: function(response) {
+            let dataResult = JSON.parse(response);
+            if (dataResult.exists) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error!',
-                    text: dataResult.title || 'Failed to add new bus.',
+                    title: 'Duplicate Entry',
+                    text: 'Bus number already exists. Please enter a unique number.',
+                });
+            } else {
+                // Proceed to save new bus if not duplicate
+                var data = $("#bus_form").serialize();
+                $.ajax({
+                    data: data,
+                    type: "post",
+                    url: "backend/bus.php",
+                    success: function(dataResult) {
+                        var dataResult = JSON.parse(dataResult);
+                        if (dataResult.statusCode == 200) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: 'New bus added successfully!',
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: dataResult.title || 'Failed to add new bus.',
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong with the server request.',
+                        });
+                    }
                 });
             }
         },
@@ -280,11 +304,12 @@ $("#bus_form").submit(function(event) {
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
-                text: 'Something went wrong with the server request.',
+                text: 'Could not verify bus number.',
             });
         }
     });
 });
+
 
 // Populate Edit Bus Modal Data
 $(document).on("click", ".busUpdate", function(e) {
