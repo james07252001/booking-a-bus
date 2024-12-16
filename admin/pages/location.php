@@ -261,23 +261,19 @@ $("#edit_location_form").submit(function(event) {
             
             if (dataResult.statusCode == 200) {
                 $("#locationEditModal").modal("hide");
-                
-                // SweetAlert success message
                 Swal.fire({
                     icon: 'success',
                     title: 'Updated!',
                     text: 'Location updated successfully!',
                     confirmButtonText: 'OK'
                 }).then(() => {
-                    location.reload(); // Reload after confirming
+                    location.reload();
                 });
-                
             } else if (dataResult.statusCode == 201) {
-                // SweetAlert error message
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error!',
-                    text: dataResult.message || 'Failed to update the location.',
+                    title: 'Duplicate Location!',
+                    text: dataResult.message || 'Location name already exists. Please use a different name.',
                 });
             }
         },
@@ -290,6 +286,7 @@ $("#edit_location_form").submit(function(event) {
         }
     });
 });
+
 
 $(document).on("click", ".locationDelete", function() {
     var id = $(this).attr("data-id");
