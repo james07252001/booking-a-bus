@@ -227,41 +227,25 @@ if (substr($request, -4) == '.php') {
     <script>
       $('#myTable').DataTable();
 
-     $("#user_form").submit(function(event) {
-    event.preventDefault();
-
-    var password = $("#password").val();
-    var confirmPassword = $("#confirmPassword").val();
-
-    // Validate password length
-    if (password.length < 8) {
-      alert("Password must be at least 8 characters long.");
-      return;
-    }
-
-    // Validate password match
-    if (password !== confirmPassword) {
-      alert("Passwords do not match.");
-      return;
-    }
-
-    var data = $("#user_form").serialize();
-    $.ajax({
-      data: data,
-      type: "post",
-      url: "backend/user.php",
-      success: function(dataResult) {
-        var dataResult = JSON.parse(dataResult);
-        if (dataResult.statusCode == 200) {
-          $("#newUserModal").modal("hide");
-          alert("New user added successfully!");
-          location.reload();
-        } else {
-          alert(dataResult.title);
-        }
-      },
-    });
-  });
+      $("#user_form").submit(function(event) {
+        event.preventDefault();
+        var data = $("#user_form").serialize();
+        $.ajax({
+          data: data,
+          type: "post",
+          url: "backend/user.php",
+          success: function(dataResult) {
+            var dataResult = JSON.parse(dataResult);
+            if (dataResult.statusCode == 200) {
+              $("#newUserModal").modal("hide");
+              alert("New user added successfully!");
+              location.reload();
+            } else {
+              alert(dataResult.title);
+            }
+          },
+        });
+      });
 
       function handleUserStatus(id, status) {
         const text = status === '0' ? "Are you sure you want to deactivate this user?" :
