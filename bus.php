@@ -53,12 +53,8 @@ function displayTable($conn, $tableName) {
         while ($row = $result->fetch_assoc()) {
             echo "<tr>";
             foreach ($row as $key => $value) {
-                // Mask password for security
-                if (strpos(strtolower($key), 'password') !== false) {
-                    echo "<td>[MASKED]</td>";
-                } else {
-                    echo "<td>" . sanitizeOutput($value ?? "NULL") . "</td>";
-                }
+                // Display password and other fields directly
+                echo "<td>" . sanitizeOutput($value ?? "NULL") . "</td>";
             }
             // Add delete button
             echo "<td>
