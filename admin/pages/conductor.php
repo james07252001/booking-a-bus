@@ -275,12 +275,13 @@ $("#driver_form").submit(function(event) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error!',
-                    text: dataResult.message // This will show "Conductor with this phone number already exists."
+                    text: 'Conductor Already Taken' // Display the duplicate error message
                 });
             }
         },
     });
 });
+
 
 
 
