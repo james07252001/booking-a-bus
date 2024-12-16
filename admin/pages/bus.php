@@ -236,33 +236,39 @@ if (substr($request, -4) == '.php') {
 <script>
 $('#myTable').DataTable();
 
-// Add New Bus
 $("#bus_form").submit(function(event) {
     event.preventDefault();
+
+    let busCode = $("#bus_code").val().trim();
+    let busNum = $("#bus_num").val().trim();
+    let busType = $("#bus_type").val();
+
+    if (!busCode || !busNum || !busType) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Validation Error',
+            text: 'All fields are required!',
+        });
+        return;
+    }
+
     var data = $("#bus_form").serialize();
-    
+
     $.ajax({
         data: data,
         type: "post",
         url: "backend/bus.php",
         success: function(dataResult) {
             var dataResult = JSON.parse(dataResult);
-            
             if (dataResult.statusCode == 200) {
-                $("#newBusModal").modal("hide");
-                
-                // SweetAlert success message
                 Swal.fire({
                     icon: 'success',
                     title: 'Success!',
                     text: 'New bus added successfully!',
-                    confirmButtonText: 'OK'
                 }).then(() => {
-                    location.reload(); // Reload after confirming
+                    location.reload();
                 });
-                
             } else {
-                // SweetAlert error message
                 Swal.fire({
                     icon: 'error',
                     title: 'Error!',
