@@ -250,7 +250,8 @@ if (substr($request, -4) == '.php') {
     $(document).ready(function() {
         $('#myTable').DataTable();
         
-        $("#driver_form").submit(function(event) {
+       // Handle form submission for adding a new driver
+$("#driver_form").submit(function(event) {
     event.preventDefault();
     var data = $("#driver_form").serialize();
     $.ajax({
@@ -260,19 +261,29 @@ if (substr($request, -4) == '.php') {
         success: function(dataResult) {
             var dataResult = JSON.parse(dataResult);
             if (dataResult.statusCode == 200) {
+                // Success
                 $("#newDriverModal").modal("hide");
                 Swal.fire({
                     title: "Success!",
-                    text: "New driver added successfully!",
+                    text: dataResult.message || "New driver added successfully!",
                     icon: "success",
                     confirmButtonText: "OK"
                 }).then(() => {
                     location.reload();  // Reload after SweetAlert is closed
                 });
             } else if (dataResult.statusCode == 201) {
+                // Error: Driver already exists
                 Swal.fire({
                     title: "Error!",
                     text: dataResult.message || "An error occurred!",
+                    icon: "error",
+                    confirmButtonText: "OK"
+                });
+            } else if (dataResult.statusCode == 500) {
+                // Internal server error
+                Swal.fire({
+                    title: "Error!",
+                    text: dataResult.message || "An error occurred while processing your request.",
                     icon: "error",
                     confirmButtonText: "OK"
                 });
