@@ -284,39 +284,54 @@ $('#myTable').DataTable();
 
 $("#route_form").submit(function(event) {
     event.preventDefault();
-    var data = $("#route_form").serialize();
-    
+    var data = $(this).serialize();
+
     $.ajax({
         data: data,
         type: "post",
         url: "backend/route.php",
         success: function(dataResult) {
             var dataResult = JSON.parse(dataResult);
-            
+
             if (dataResult.statusCode == 200) {
                 $("#newRouteModal").modal("hide");
-                
-                // SweetAlert success message
                 Swal.fire({
                     icon: 'success',
                     title: 'Success!',
                     text: 'New route added successfully!',
                     confirmButtonText: 'OK'
                 }).then(() => {
-                    location.reload(); // Reload the page after confirming
+                    location.reload();
                 });
-                
             } else if (dataResult.statusCode == 201) {
-                // SweetAlert error message
                 Swal.fire({
                     icon: 'error',
                     title: 'Error!',
-                    text: dataResult.message || 'Failed to add new route. Please try again.',
+                    text: dataResult.message,
                 });
             }
         },
+        success: function(dataResult) {
+    var dataResult = JSON.parse(dataResult);
+    
+    if (dataResult.statusCode == 200) {
+        Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: 'Operation completed successfully!',
+        }).then(() => {
+            location.reload(); // Reload page
+        });
+    } else if (dataResult.statusCode == 201) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Duplicate Route',
+            text: dataResult.message || 'This route already exists.',
+        });
+    }
+},
+
         error: function() {
-            // SweetAlert error handling for server issues
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
@@ -325,6 +340,7 @@ $("#route_form").submit(function(event) {
         }
     });
 });
+
 
 
     // Route Update Modal Data Population
