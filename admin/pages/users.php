@@ -228,40 +228,57 @@ if (substr($request, -4) == '.php') {
       $('#myTable').DataTable();
 
       $("#user_form").submit(function(event) {
-    event.preventDefault();
+  event.preventDefault();
 
-    var password = $("#password").val();
-    var confirmPassword = $("#confirmPassword").val();
+  var password = $("#password").val();
+  var confirmPassword = $("#confirmPassword").val();
 
-    // Validate password length
-    if (password.length < 8) {
-      alert("Password must be at least 8 characters long.");
-      return;
-    }
-
-    // Validate password match
-    if (password !== confirmPassword) {
-      alert("Passwords do not match.");
-      return;
-    }
-
-    var data = $("#user_form").serialize();
-    $.ajax({
-      data: data,
-      type: "post",
-      url: "backend/user.php",
-      success: function(dataResult) {
-        var dataResult = JSON.parse(dataResult);
-        if (dataResult.statusCode == 200) {
-          $("#newUserModal").modal("hide");
-          alert("New user added successfully!");
-          location.reload();
-        } else {
-          alert(dataResult.title);
-        }
-      },
+  // Validate password length
+  if (password.length < 8) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: 'Password must be at least 8 characters long.',
     });
+    return;
+  }
+
+  // Validate password match
+  if (password !== confirmPassword) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: 'Passwords do not match.',
+    });
+    return;
+  }
+
+  var data = $("#user_form").serialize();
+  $.ajax({
+    data: data,
+    type: "post",
+    url: "backend/user.php",
+    success: function(dataResult) {
+      var dataResult = JSON.parse(dataResult);
+      if (dataResult.statusCode == 200) {
+        $("#newUserModal").modal("hide");
+        Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: 'New user added successfully!',
+        }).then(() => {
+          location.reload();
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: dataResult.title,
+        });
+      }
+    },
   });
+});
 
       function handleUserStatus(id, status) {
         const text = status === '0' ? "Are you sure you want to deactivate this user?" :
@@ -287,5 +304,6 @@ if (substr($request, -4) == '.php') {
     <script src="./assets/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="./assets/datatables/jquery.dataTables.min.js"></script>
     <script src="./assets/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </body>
 </html>
