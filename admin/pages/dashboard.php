@@ -382,7 +382,8 @@ if (substr($request, -4) == '.php') {
                     <?php
                     $result = mysqli_query($conn, "SELECT SUM(total) AS total_fare FROM tblbook");
                     $row = mysqli_fetch_assoc($result);
-                    echo $row['total_fare'] ? $row['total_fare'] : 0; // Display 0 if no fares
+                    $total_fare = $row['total_fare'] ? $row['total_fare'] : 0; // Default to 0 if NULL
+                    echo "₱ " . number_format($total_fare, 2); // Format with ₱ and 2 decimal places
                     ?>
                 </h1>
             </div>
