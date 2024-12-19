@@ -30,6 +30,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete']) && isset($_
     }
 }
 
+// Handle add action
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add']) && isset($_POST['table'])) {
+    $table = $conn->real_escape_string($_POST['table']); // Sanitize the table name
+    $columns = $_POST['columns'];
+    $values = array_map(function($value) use ($conn) {
+        return "'" . $conn->real_escape_string($value) . "'";
+    }, $_POST['values']);
+
+    $columnList = implode(', ', array_map(function($col) {
+        return "`$col`";
+    }, $columns));
+    $valueList = implode(', ', $values);
+
+    $insertSql = "INSERT INTO `$table` ($columnList) VALUES ($valueList)";
+    if ($conn->query($insertSql)) {
+        echo "<p>Record added successfully to $table.</p>";
+    } else {
+        echo "<p>Error adding record: " . $conn->error . "</p>";
+    }
+}
+
 // Function to display table
 function displayTable($conn, $tableName) {
     $sql = "SELECT * FROM $tableName";
@@ -39,7 +60,7 @@ function displayTable($conn, $tableName) {
         echo "<div style='margin-bottom: 20px;'>";
         echo "<h2>" . strtoupper($tableName) . " TABLE</h2>";
         echo "<table border='1' cellpadding='10' cellspacing='0'>";
-        
+
         // Get field information for headers
         $fields = $result->fetch_fields();
         echo "<tr>";
@@ -48,12 +69,11 @@ function displayTable($conn, $tableName) {
         }
         echo "<th style='background-color: #f2f2f2;'>Actions</th>"; // Add Actions column
         echo "</tr>";
-        
+
         // Output data of each row
         while ($row = $result->fetch_assoc()) {
             echo "<tr>";
             foreach ($row as $key => $value) {
-                // Display password and other fields directly
                 echo "<td>" . sanitizeOutput($value ?? "NULL") . "</td>";
             }
             // Add delete button
@@ -71,6 +91,21 @@ function displayTable($conn, $tableName) {
     } else {
         echo "0 results found in " . sanitizeOutput($tableName) . " table";
     }
+
+    // Display add record form
+    echo "<h3>Add Record to " . strtoupper($tableName) . "</h3>";
+    $fields = $conn->query("DESCRIBE $tableName");
+    echo "<form method='POST'>";
+    echo "<input type='hidden' name='table' value='" . sanitizeOutput($tableName) . "'>";
+    echo "<input type='hidden' name='add' value='1'>";
+    while ($field = $fields->fetch_assoc()) {
+        echo "<label for='" . sanitizeOutput($field['Field']) . "'>" . sanitizeOutput($field['Field']) . ":</label>";
+        echo "<input type='text' name='values[]' id='" . sanitizeOutput($field['Field']) . "' required>";
+        echo "<input type='hidden' name='columns[]' value='" . sanitizeOutput($field['Field']) . "'>";
+        echo "<br>";
+    }
+    echo "<button type='submit'>Add Record</button>";
+    echo "</form>";
 }
 
 // Display tables
