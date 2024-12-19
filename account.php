@@ -624,39 +624,53 @@ if (substr($request, -4) == '.php') {
     var printContents = document.getElementById(divId).innerHTML;
     var originalContents = document.body.innerHTML;
 
-    // Define the header content
+    // Define the ticket header content
     var headerContent = `
-        <div style="text-align: center; margin-bottom: 20px;">
-            <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
-                <div>
-                    <h1 style="margin: 0; font-size: 24px;">Bantayan Online Bus Reservation System</h1>
-                    <p style="margin: 0; font-size: 18px;">Rl Fitness & Sports Hub, Bantayan, Cebu</p>
-                    <p style="margin: 0; font-size: 14px;">09153312395 / pastorillo.james25@gmail.com</p>
-                </div>
-            </div>
+        <div style="text-align: center; margin-bottom: 10px;">
+            
+            <h2 style="margin: 0; font-size: 18px;">Bantayan Online Bus Reservation System</h2>
+            <p style="margin: 0; font-size: 12px;">Rl Fitness & Sports Hub, Bantayan, Cebu</p>
+            <p style="margin: 0; font-size: 12px;">09153312395 / pastorillo.james25@gmail.com</p>
         </div>
     `;
 
-    // Filter out elements with the 'no-print' class
-    var filteredContents = printContents.replace(/<[^>]*class=["'].*?no-print.*?["'][^>]*>(.*?)<\/[^>]*>/gs, '');
-
-    // Combine the header and the print contents
+    // Apply ticket-specific styles
     document.body.innerHTML = `
         <html>
             <head>
-                <title>Print</title>
+                <title>Print Ticket</title>
                 <style>
-                    body { font-family: Arial, sans-serif; margin: 20px; }
-                    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-                    th, td { padding: 8px; text-align: left; border: 1px solid #ddd; font-size: 14px; }
-                    th { background-color: #f4f4f4; }
-                    .no-print { display: none; } /* Hide elements with no-print class */
+                    body {
+                        font-family: Arial, sans-serif;
+                        width: 300px;
+                        margin: auto;
+                        padding: 10px;
+                        border: 1px dashed #000;
+                    }
+                    h2, p {
+                        text-align: center;
+                        margin: 5px 0;
+                    }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-top: 10px;
+                    }
+                    th, td {
+                        text-align: left;
+                        padding: 5px;
+                        font-size: 12px;
+                        border-bottom: 1px solid #ddd;
+                    }
+                    th {
+                        background-color: #f4f4f4;
+                    }
                 </style>
             </head>
             <body>
                 ${headerContent}
-                <div style="margin: auto; max-width: 1000px;">
-                    ${filteredContents}
+                <div>
+                    ${printContents}
                 </div>
             </body>
         </html>
