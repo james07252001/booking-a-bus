@@ -628,7 +628,6 @@ if (substr($request, -4) == '.php') {
     var headerContent = `
         <div style="text-align: center; margin-bottom: 20px;">
             <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
-                <img src="../assets/images/bobrs.png" alt="Logo" style="width: 100px; height: 100px; margin-right: 20px;">
                 <div>
                     <h1 style="margin: 0; font-size: 24px;">Bantayan Online Bus Reservation System</h1>
                     <p style="margin: 0; font-size: 18px;">Rl Fitness & Sports Hub, Bantayan, Cebu</p>
