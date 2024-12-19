@@ -621,6 +621,7 @@ if (substr($request, -4) == '.php') {
 
 <script>
     function PrintElem(divId) {
+    // Get the print content and the original content
     var printContents = document.getElementById(divId).innerHTML;
     var originalContents = document.body.innerHTML;
 
@@ -628,6 +629,7 @@ if (substr($request, -4) == '.php') {
     var headerContent = `
         <div style="text-align: center; margin-bottom: 20px;">
             <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                <img src="../assets/img/bobrs.png" alt="Logo" style="width: 100px; height: 100px; margin-right: 20px;">
                 <div>
                     <h1 style="margin: 0; font-size: 24px;">Bantayan Online Bus Reservation System</h1>
                     <p style="margin: 0; font-size: 18px;">Rl Fitness & Sports Hub, Bantayan, Cebu</p>
@@ -637,7 +639,13 @@ if (substr($request, -4) == '.php') {
         </div>
     `;
 
-    // Combine the header and the print contents
+    // Hide elements related to status
+    var statusElements = document.querySelectorAll('.status-column, .status-row');
+    statusElements.forEach(function (element) {
+        element.style.display = 'none';
+    });
+
+    // Combine header and content for printing
     document.body.innerHTML = `
         <html>
             <head>
@@ -658,8 +666,14 @@ if (substr($request, -4) == '.php') {
         </html>
     `;
 
+    // Print the content
     window.print();
+
+    // Restore the original content and show status elements again
     document.body.innerHTML = originalContents;
+    statusElements.forEach(function (element) {
+        element.style.display = '';
+    });
 }
 
 
