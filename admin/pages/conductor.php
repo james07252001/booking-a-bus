@@ -165,14 +165,7 @@ if (substr($request, -4) == '.php') {
                     </div>
                     <div class="form-group">
                         <label>Contact #</label>
-                        <input 
-                            type="tel" 
-                            id="phone_u" 
-                            name="phone" 
-                            class="form-control" 
-                            pattern="09\d{9}" 
-                            title="Please enter a valid phone number starting with 09 and exactly 11 digits." 
-                            required>
+                        <input type="tel" id="phone" name="phone" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label>Address</label>
@@ -210,16 +203,8 @@ if (substr($request, -4) == '.php') {
                     
                     <div class="form-group">
                         <label>Contact #</label>
-                        <input 
-                            type="tel" 
-                            id="phone_u" 
-                            name="phone" 
-                            class="form-control" 
-                            pattern="09\d{9}" 
-                            title="Please enter a valid phone number starting with 09 and exactly 11 digits." 
-                            required>
+                        <input type="tel" id="phone_u" name="phone" class="form-control" required>
                     </div>
-
                     <div class="form-group">
                         <label>Address</label>
                         <input type="text" id="address_u" name="address" class="form-control" required>
@@ -375,17 +360,6 @@ $("#delete_driver_form").submit(function(event) {
         }
     });
 });
-
-document.getElementById('phone_u').addEventListener('input', function (e) {
-    const phoneInput = e.target.value;
-    const isValid = /^09\d{9}$/.test(phoneInput);
-    if (!isValid) {
-        e.target.setCustomValidity('Please enter a valid phone number starting with 09 and exactly 11 digits.');
-    } else {
-        e.target.setCustomValidity('');
-    }
-});
-
 
 </script>
 <?php include('includes/scripts.php')?>
