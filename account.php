@@ -537,6 +537,7 @@ if (substr($request, -4) == '.php') {
                                     <p class="mb-0 d-flex align-items-center justify-content-between">
                                         <span class="text-muted">Status:</span>
                                         <span class="font-weight-bold text-uppercase badge badge-danger"><?php echo $row['payment_status'] ?></span>
+                                        <div class="no-print">Status: Active</div>
                                     </p>
                                     <p class="mb-0 d-flex align-items-center justify-content-between">
                                         <span class="text-muted">Schedule Date:</span>
