@@ -224,9 +224,11 @@ if (substr($request, -4) == '.php') {
     }
 
     function printContent() {
-    // Hide elements that should not be printed (e.g., the graph)
-    var chartContainer = document.getElementById('googleChart');
-    chartContainer.style.display = 'none'; // Hide the graph
+    // Hide the "Actions" column for print
+    var actionCells = document.getElementsByClassName('hide-on-print');
+    for (var i = 0; i < actionCells.length; i++) {
+        actionCells[i].style.display = 'none';
+    }
 
     // Capture the table content
     var table = document.getElementById('myTable').outerHTML;
@@ -255,8 +257,10 @@ if (substr($request, -4) == '.php') {
     printWindow.document.close();
     printWindow.print();
 
-    // Restore the visibility of the graph after printing
-    chartContainer.style.display = 'block';
+    // Restore the "Actions" column visibility after printing
+    for (var i = 0; i < actionCells.length; i++) {
+        actionCells[i].style.display = '';
+    }
 }
 
 </script>
