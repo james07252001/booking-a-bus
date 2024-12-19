@@ -165,13 +165,14 @@ if (substr($request, -4) == '.php') {
                     </div>
                     <div class="form-group">
                         <label>Contact #</label>
-                        <input type="tel" id="phone" name="phone" class="form-control" required>
+                        <input type="tel" id="phone" name="phone" class="form-control" 
+                               pattern="\d{11}" title="Contact number must be 11 digits" required>
                     </div>
                     <div class="form-group">
                         <label>Address</label>
                         <input type="text" id="address" name="address" class="form-control" required>
                     </div>
-                    </div>
+                </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button id="btn-add" type="submit" class="btn btn-primary">Save</button>
@@ -180,6 +181,20 @@ if (substr($request, -4) == '.php') {
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('driver_form').addEventListener('submit', function(event) {
+        const phoneField = document.getElementById('phone');
+        const phoneValue = phoneField.value;
+        
+        // Check if phone value is exactly 11 digits
+        if (!/^\d{11}$/.test(phoneValue)) {
+            alert('Contact number must be exactly 11 digits.');
+            event.preventDefault(); // Prevent form submission
+        }
+    });
+</script>
+
 
 <!-- Edit Bus Modal -->
 <div class="modal fade" id="driverEditModal" tabindex="-1" aria-labelledby="driverEditModalLabel" aria-hidden="true">
