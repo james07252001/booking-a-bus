@@ -165,7 +165,14 @@ if (substr($request, -4) == '.php') {
                     </div>
                     <div class="form-group">
                         <label>Contact #</label>
-                        <input type="tel" id="phone" name="phone" class="form-control" required>
+                        <input 
+                            type="tel" 
+                            id="phone_u" 
+                            name="phone" 
+                            class="form-control" 
+                            pattern="09\d{9}" 
+                            title="Please enter a valid phone number starting with 09 and exactly 11 digits." 
+                            required>
                     </div>
                     <div class="form-group">
                         <label>Address</label>
