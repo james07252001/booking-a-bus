@@ -223,41 +223,42 @@ if (substr($request, -4) == '.php') {
         chart.draw(data, options);
     }
 
-    // JavaScript function to print chart and table
     function printContent() {
-        // Hide the Action column for print
-        var actionCells = document.getElementsByClassName('hide-on-print');
-        for (var i = 0; i < actionCells.length; i++) {
-            actionCells[i].style.display = 'none';
-        }
+    // Hide elements that should not be printed (e.g., the graph)
+    var chartContainer = document.getElementById('googleChart');
+    chartContainer.style.display = 'none'; // Hide the graph
 
-        // Print the chart
-        var chartContainer = document.getElementById('googleChart');
-        var chartSVG = chartContainer.getElementsByTagName('svg')[0].outerHTML;
-        
-        // Print the table
-        var table = document.getElementById('myTable').outerHTML;
+    // Capture the table content
+    var table = document.getElementById('myTable').outerHTML;
 
-        // Combine both for printing
-        var combinedContent = '<html><head><title>Print Report</title>';
-        combinedContent += '<style>';
-        combinedContent += 'table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }';
-        combinedContent += 'th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; font-size: 20px}';
-        combinedContent += '@media print { body { margin: 1in; }}'; // Adding margin for print
-        combinedContent += '</style>';
-        combinedContent += '</head><body>' + chartSVG + table + '</body></html>';
+    // Generate the printable HTML content
+    var printWindowContent = `
+        <html>
+            <head>
+                <title>Print Table</title>
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 20px; }
+                    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                    th, td { padding: 8px; text-align: left; border: 1px solid #ddd; font-size: 14px; }
+                    th { background-color: #f4f4f4; }
+                </style>
+            </head>
+            <body>
+                ${table}
+            </body>
+        </html>
+    `;
 
-        // Open a new window and print
-        var printWindow = window.open('', '', 'height=600,width=800');
-        printWindow.document.write(combinedContent);
-        printWindow.document.close();
-        printWindow.print();
+    // Open a new window and print
+    var printWindow = window.open('', '', 'height=600,width=800');
+    printWindow.document.write(printWindowContent);
+    printWindow.document.close();
+    printWindow.print();
 
-        // Restore Action column visibility after printing
-        for (var i = 0; i < actionCells.length; i++) {
-            actionCells[i].style.display = '';
-        }
-    }
+    // Restore the visibility of the graph after printing
+    chartContainer.style.display = 'block';
+}
+
 </script>
 <?php include('includes/scripts.php')?>
 
