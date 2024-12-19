@@ -233,6 +233,21 @@ if (substr($request, -4) == '.php') {
     // Capture the table content
     var table = document.getElementById('myTable').outerHTML;
 
+    // Define the header content with logo, title, and contact information
+    var headerContent = `
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                <img src="assets/img/bobrs.png" alt="Logo" style="width: 100px; height: 100px; margin-right: 20px;">
+                <div>
+                    <h1 style="margin: 0; font-size: 24px;">Bantayan Staffs Report</h1>
+                    <p style="margin: 0; font-size: 18px;">Bantayan Online Bus Reservation System</p>
+                    <p style="margin: 0; font-size: 14px;">Rl Fitness & Sports Hub, Bantayan, Cebu</p>
+                    <p style="margin: 0; font-size: 14px;">09153312395 / pastorillo.james25@gmail.com</p>
+                </div>
+            </div>
+        </div>
+    `;
+
     // Generate the printable HTML content
     var printWindowContent = `
         <html>
@@ -246,6 +261,7 @@ if (substr($request, -4) == '.php') {
                 </style>
             </head>
             <body>
+                ${headerContent}
                 ${table}
             </body>
         </html>
