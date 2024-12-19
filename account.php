@@ -621,12 +621,27 @@ if (substr($request, -4) == '.php') {
 
 <script>
     function PrintElem(divId) {
-        var printContents = document.getElementById(divId).innerHTML;
-        var originalContents = document.body.innerHTML;
-        document.body.innerHTML = "<html><head><title></title></head><body><div style='margin: auto; max-width: 500px'>" + printContents + "</div></body>";
-        window.print();
-        document.body.innerHTML = originalContents;
-    }
+    var printContents = document.getElementById(divId).innerHTML;
+    var originalContents = document.body.innerHTML;
+    var originalTitle = document.title;
+
+    // Create a new window for printing
+    var printWindow = window.open('', '', 'height=600,width=800');
+    printWindow.document.write('<html><head><title>' + originalTitle + '</title>');
+    printWindow.document.write('<link rel="stylesheet" href="../asseets/images/bobrs.png" type="text/css" />'); // Include your CSS
+    printWindow.document.write('</head><body><div style="margin: auto; max-width: 500px;">');
+    printWindow.document.write(printContents);
+    printWindow.document.write('</div></body></html>');
+    printWindow.document.close();
+
+    // Delay the print to ensure the content is loaded
+    printWindow.focus();
+    setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+    }, 500);
+}
+
 
     function cancelBook(id) {
         Swal.fire({
