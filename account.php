@@ -621,7 +621,6 @@ if (substr($request, -4) == '.php') {
 
 <script>
     function PrintElem(divId) {
-    // Get the print content and the original content
     var printContents = document.getElementById(divId).innerHTML;
     var originalContents = document.body.innerHTML;
 
@@ -638,13 +637,10 @@ if (substr($request, -4) == '.php') {
         </div>
     `;
 
-    // Hide elements related to status
-    var statusElements = document.querySelectorAll('.status-column, .status-row');
-    statusElements.forEach(function (element) {
-        element.style.display = 'none';
-    });
+    // Filter out elements with the 'no-print' class
+    var filteredContents = printContents.replace(/<[^>]*class=["'].*?no-print.*?["'][^>]*>(.*?)<\/[^>]*>/gs, '');
 
-    // Combine header and content for printing
+    // Combine the header and the print contents
     document.body.innerHTML = `
         <html>
             <head>
@@ -654,26 +650,22 @@ if (substr($request, -4) == '.php') {
                     table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
                     th, td { padding: 8px; text-align: left; border: 1px solid #ddd; font-size: 14px; }
                     th { background-color: #f4f4f4; }
+                    .no-print { display: none; } /* Hide elements with no-print class */
                 </style>
             </head>
             <body>
                 ${headerContent}
                 <div style="margin: auto; max-width: 1000px;">
-                    ${printContents}
+                    ${filteredContents}
                 </div>
             </body>
         </html>
     `;
 
-    // Print the content
     window.print();
-
-    // Restore the original content and show status elements again
     document.body.innerHTML = originalContents;
-    statusElements.forEach(function (element) {
-        element.style.display = '';
-    });
 }
+
 
 
     function cancelBook(id) {
