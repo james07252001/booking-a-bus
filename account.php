@@ -623,23 +623,44 @@ if (substr($request, -4) == '.php') {
     function PrintElem(divId) {
     var printContents = document.getElementById(divId).innerHTML;
     var originalContents = document.body.innerHTML;
-    var originalTitle = document.title;
 
-    // Create a new window for printing
-    var printWindow = window.open('', '', 'height=600,width=800');
-    printWindow.document.write('<html><head><title>' + originalTitle + '</title>');
-    printWindow.document.write('<link rel="stylesheet" href="../asseets/images/bobrs.png" type="text/css" />'); // Include your CSS
-    printWindow.document.write('</head><body><div style="margin: auto; max-width: 500px;">');
-    printWindow.document.write(printContents);
-    printWindow.document.write('</div></body></html>');
-    printWindow.document.close();
+    // Define the header content
+    var headerContent = `
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                <img src="../assets/img/bobrs.png" alt="Logo" style="width: 100px; height: 100px; margin-right: 20px;">
+                <div>
+                    <h1 style="margin: 0; font-size: 24px;">Bantayan Online Bus Reservation System</h1>
+                    <p style="margin: 0; font-size: 18px;">Rl Fitness & Sports Hub, Bantayan, Cebu</p>
+                    <p style="margin: 0; font-size: 14px;">09153312395 / pastorillo.james25@gmail.com</p>
+                </div>
+            </div>
+        </div>
+    `;
 
-    // Delay the print to ensure the content is loaded
-    printWindow.focus();
-    setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-    }, 500);
+    // Combine the header and the print contents
+    document.body.innerHTML = `
+        <html>
+            <head>
+                <title>Print</title>
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 20px; }
+                    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                    th, td { padding: 8px; text-align: left; border: 1px solid #ddd; font-size: 14px; }
+                    th { background-color: #f4f4f4; }
+                </style>
+            </head>
+            <body>
+                ${headerContent}
+                <div style="margin: auto; max-width: 1000px;">
+                    ${printContents}
+                </div>
+            </body>
+        </html>
+    `;
+
+    window.print();
+    document.body.innerHTML = originalContents;
 }
 
 
