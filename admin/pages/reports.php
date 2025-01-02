@@ -10,23 +10,38 @@ $page = isset($_GET['page']) ? max((int)$_GET['page'], 1) : 1; // Ensure page is
 $offset = max(($page - 1) * $limit, 0); // Ensure offset is never negative
 
     // Query to fetch driver, conductor, bus, route, schedule, and fare data based on schedule_id
-    $query = "
-        SELECT d.id as driver_id, d.name as driver_name, c.name as conductor_name, 
-               rl.location_name as route_from, rl2.location_name as route_to, 
-               s.schedule_date, b1.bus_num, b2.bus_code, 
-               IFNULL(SUM(bk.total), 0) as total_fare_per_day
-        FROM tbldriver d
-        LEFT JOIN tblconductor c ON d.id = c.id
-        LEFT JOIN tblbus b1 ON d.id = b1.id
-        LEFT JOIN tblbus b2 ON d.id = b2.id
-        LEFT JOIN tblroute r ON d.id = r.id
-        LEFT JOIN tblschedule s ON d.id = s.driver_id
-        LEFT JOIN tbllocation rl ON r.route_from = rl.id
-        LEFT JOIN tbllocation rl2 ON r.route_to = rl2.id
-        LEFT JOIN tblbook bk ON s.id = bk.schedule_id  -- Join based on schedule_id from tblbook
-        GROUP BY s.id, s.schedule_date, d.id, c.id, rl.location_name, rl2.location_name, b1.bus_num, b2.bus_code
-        ORDER BY s.schedule_date ASC
-        LIMIT $limit OFFSET $offset";
+    // Query to fetch driver, conductor, bus, route, schedule, and fare data
+$query = "
+SELECT 
+    d.id as driver_id, 
+    d.name as driver_name, 
+    c.name as conductor_name, 
+    b.bus_num,
+    b.bus_code,
+    rl1.location_name as route_from, 
+    rl2.location_name as route_to, 
+    s.schedule_date, 
+    IFNULL(SUM(bk.total), 0) as total_fare_per_day
+FROM tbldriver d
+LEFT JOIN tblschedule s ON s.driver_id = d.id
+LEFT JOIN tblconductor c ON s.conductor_id = c.id
+LEFT JOIN tblbus b ON s.bus_id = b.id
+LEFT JOIN tblroute r ON s.route_id = r.id
+LEFT JOIN tbllocation rl1 ON r.route_from = rl1.id
+LEFT JOIN tbllocation rl2 ON r.route_to = rl2.id
+LEFT JOIN tblbook bk ON s.id = bk.schedule_id
+GROUP BY 
+    s.id, 
+    d.id, 
+    d.name,
+    c.name,
+    b.bus_num,
+    b.bus_code,
+    rl1.location_name,
+    rl2.location_name,
+    s.schedule_date
+ORDER BY s.schedule_date DESC
+LIMIT $limit OFFSET $offset";
         
         $result = mysqli_query($conn, $query);
 
@@ -36,11 +51,10 @@ $offset = max(($page - 1) * $limit, 0); // Ensure offset is never negative
         }
         
        // Count total records for pagination
-$countQuery = "
-SELECT COUNT(*) AS total_records 
-FROM tbldriver d
-LEFT JOIN tblschedule s ON d.id = s.driver_id
-";
+       $countQuery = "
+       SELECT COUNT(DISTINCT s.id) AS total_records 
+       FROM tblschedule s
+       LEFT JOIN tbldriver d ON s.driver_id = d.id";
 $countResult = mysqli_query($conn, $countQuery);
 $totalRecords = mysqli_fetch_assoc($countResult)['total_records'];
 $totalPages = max(ceil($totalRecords / $limit), 1); // Ensure at least 1 page
