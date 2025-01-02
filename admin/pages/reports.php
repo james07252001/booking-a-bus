@@ -171,7 +171,7 @@ if (substr($request, -4) == '.php') {
             </thead>
             <tbody>
                 <?php
-                    $i = 1;
+                   $i = $offset + 1;
                     // Loop through data
                     while ($row = mysqli_fetch_assoc($result)) {
                         echo "<tr id='{$row["driver_id"]}'>
