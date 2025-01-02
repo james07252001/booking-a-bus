@@ -7,10 +7,15 @@
 
     // Query to fetch driver, conductor, bus, route, schedule, and fare data based on schedule_id
     $query = "
-        SELECT d.id as driver_id, d.name as driver_name, c.name as conductor_name, 
-               rl.location_name as route_from, rl2.location_name as route_to, 
-               s.schedule_date, b1.bus_num, b2.bus_code, 
-               IFNULL(SUM(bk.total), 0) as total_fare_per_day
+        SELECT d.id as driver_id, 
+        d.name as driver_name,
+        c.name as conductor_name,
+        b1.bus_num AS bus_name, 
+        b1.bus_code, 
+        rl.location_name as route_from,
+        rl2.location_name as route_to, 
+        s.schedule_date, 
+        IFNULL(SUM(bk.total), 0) as total_fare_per_day
         FROM tbldriver d
         LEFT JOIN tblconductor c ON d.id = c.id
         LEFT JOIN tblbus b1 ON d.id = b1.id
