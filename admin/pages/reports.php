@@ -21,7 +21,8 @@
         LEFT JOIN tbllocation rl2 ON r.route_to = rl2.id
         LEFT JOIN tblbook bk ON s.id = bk.schedule_id  -- Join based on schedule_id from tblbook
         GROUP BY s.id, s.schedule_date, d.id, c.id, rl.location_name, rl2.location_name, b1.bus_num, b2.bus_code
-        ORDER BY s.schedule_date ASC";
+        ORDER BY s.schedule_date ASC
+        LIMIT $limit OFFSET $offset";
         
     $result = mysqli_query($conn, $query);
 
