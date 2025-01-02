@@ -4,11 +4,10 @@
     if (!$conn) {
         die("Connection failed: " . mysqli_connect_error());
     }
-
 // Set a default limit (e.g., 100 rows) and fetch the current page number
 $limit = 100;
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$offset = ($page - 1) * $limit;
+$page = isset($_GET['page']) ? max((int)$_GET['page'], 1) : 1; // Ensure page is at least 1
+$offset = max(($page - 1) * $limit, 0); // Ensure offset is never negative
 
     // Query to fetch driver, conductor, bus, route, schedule, and fare data based on schedule_id
     $query = "
@@ -36,15 +35,20 @@ $offset = ($page - 1) * $limit;
             die("Query failed: " . mysqli_error($conn));
         }
         
-        // Count total records for pagination
-        $countQuery = "
-            SELECT COUNT(*) AS total_records 
-            FROM tbldriver d
-            LEFT JOIN tblschedule s ON d.id = s.driver_id
-        ";
-        $countResult = mysqli_query($conn, $countQuery);
-        $totalRecords = mysqli_fetch_assoc($countResult)['total_records'];
-        $totalPages = ceil($totalRecords / $limit);
+       // Count total records for pagination
+$countQuery = "
+SELECT COUNT(*) AS total_records 
+FROM tbldriver d
+LEFT JOIN tblschedule s ON d.id = s.driver_id
+";
+$countResult = mysqli_query($conn, $countQuery);
+$totalRecords = mysqli_fetch_assoc($countResult)['total_records'];
+$totalPages = max(ceil($totalRecords / $limit), 1); // Ensure at least 1 page
+
+// Adjust page number if it exceeds total pages
+$page = min($page, $totalPages);
+$offset = ($page - 1) * $limit;
+
     $request = $_SERVER['REQUEST_URI'];
 if (substr($request, -4) == '.php') {
     $new_url = substr($request, 0, -4);
