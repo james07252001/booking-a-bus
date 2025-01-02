@@ -5,6 +5,11 @@
         die("Connection failed: " . mysqli_connect_error());
     }
 
+// Set a default limit (e.g., 100 rows) and fetch the current page number
+$limit = 100;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
+
     // Query to fetch driver, conductor, bus, route, schedule, and fare data based on schedule_id
     $query = "
         SELECT d.id as driver_id, d.name as driver_name, c.name as conductor_name, 
