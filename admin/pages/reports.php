@@ -5,7 +5,21 @@
         die("Connection failed: " . mysqli_connect_error());
     }
 
-    // Query to fetch driver, conductor, bus, route, schedule, and fare data based on schedule_id
+    // Pagination settings
+    $records_per_page = 100;
+    $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+    $offset = ($page - 1) * $records_per_page;
+
+    // Count total records
+    $count_query = "
+        SELECT COUNT(DISTINCT s.id) as total 
+        FROM tbldriver d
+        LEFT JOIN tblschedule s ON d.id = s.driver_id";
+    $count_result = mysqli_query($conn, $count_query);
+    $total_records = mysqli_fetch_assoc($count_result)['total'];
+    $total_pages = ceil($total_records / $records_per_page);
+
+    // Modified main query with LIMIT and OFFSET
     $query = "
         SELECT d.id as driver_id, d.name as driver_name, c.name as conductor_name, 
                rl.location_name as route_from, rl2.location_name as route_to, 
@@ -19,9 +33,10 @@
         LEFT JOIN tblschedule s ON d.id = s.driver_id
         LEFT JOIN tbllocation rl ON r.route_from = rl.id
         LEFT JOIN tbllocation rl2 ON r.route_to = rl2.id
-        LEFT JOIN tblbook bk ON s.id = bk.schedule_id  -- Join based on schedule_id from tblbook
+        LEFT JOIN tblbook bk ON s.id = bk.schedule_id
         GROUP BY s.id, s.schedule_date, d.id, c.id, rl.location_name, rl2.location_name, b1.bus_num, b2.bus_code
-        ORDER BY s.schedule_date ASC";
+        ORDER BY s.schedule_date ASC
+        LIMIT $records_per_page OFFSET $offset";
         
     $result = mysqli_query($conn, $query);
 
