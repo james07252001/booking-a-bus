@@ -36,6 +36,16 @@ $offset = ($page - 1) * $limit;
         die("Query failed: " . mysqli_error($conn));
     }
 
+    // Count total records for pagination
+$countQuery = "
+SELECT COUNT(*) AS total_records 
+FROM tbldriver d
+LEFT JOIN tblschedule s ON d.id = s.driver_id
+";
+$countResult = mysqli_query($conn, $countQuery);
+$totalRecords = mysqli_fetch_assoc($countResult)['total_records'];
+$totalPages = ceil($totalRecords / $limit);
+
     $request = $_SERVER['REQUEST_URI'];
 if (substr($request, -4) == '.php') {
     $new_url = substr($request, 0, -4);
