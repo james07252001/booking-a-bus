@@ -11,117 +11,168 @@ if (substr($request, -4) == '.php') {
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="./assets/bootstrap/css/bootstrap.min.css" />
     <script src="https://kit.fontawesome.com/yourcode.js" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="./assets/styles.css" />
+    
     <title>Bantayan Online Bus Reservation</title>
     <style>
-      /* LED Border Animation */
-      @keyframes ledBorder {
-          0%, 100% { border-color: #f00; }
-          50% { border-color: #0f0; }
-      }
-      .card {
-          border: 3px solid transparent;
-          border-radius: 5px;
-          animation: ledBorder 1.5s infinite alternate;
-      }
-      .btn-primary {
-          background-color: #007bff;
-          border-color: #007bff;
-      }
-      .btn-primary:hover {
-          background-color: #0056b3;
-          border-color: #004085;
-      }
-      .fa-plus { margin-right: 5px; }
+    @keyframes ledBorder {
+        0% { border-color: #f00; }
+        50% { border-color: #0f0; }
+        100% { border-color: #00f; }
+    }
 
-      /* Responsive Adjustments */
-      @media (max-width: 768px) {
-          .table-responsive { overflow-x: auto; }
+    .card {
+        border: 3px solid transparent;
+        border-radius: 5px;
+        animation: ledBorder 1.5s infinite alternate;
+    }
 
-          .table-striped > tbody > tr {
-              display: flex;
-              flex-direction: column;
-              margin-bottom: 15px;
-              border: 1px solid #dee2e6;
-              border-radius: 5px;
-              background-color: #fff;
-              box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-              padding: 10px;
-          }
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
 
-          .table-striped > tbody > tr > td {
-              border: none;
-              text-align: left;
-              padding: 5px 0;
-          }
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
 
-          .table thead { display: none; }
-          .btn { width: 100%; margin: 5px 0; }
-      }
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004085;
+    }
 
-      @media (max-width: 576px) {
-          .card { font-size: 14px; }
-          .btn-primary { padding: 8px; }
-      }
-    </style>
+    .fa-plus {
+        margin-right: 5px;
+    }
+
+    /* Media Queries for responsiveness */
+    @media (max-width: 768px) {
+        .table-responsive {
+            display: block;
+            width: 100%;
+            overflow-x: auto; /* Enable horizontal scrolling for small screens */
+        }
+
+        /* Card-like display for each row on mobile */
+        .table {
+            display: block; /* Makes the table a block element */
+            overflow: hidden; /* Hide overflow */
+        }
+
+        .table-striped > tbody > tr {
+            display: block; /* Stack rows */
+            margin-bottom: 10px; /* Space between rows */
+            background-color: #f9f9f9; /* Light background for readability */
+            border: 1px solid #dee2e6; /* Border for cards */
+            border-radius: 5px; /* Rounded corners */
+            padding: 10px; /* Padding around each "card" */
+        }
+
+        .table-striped > tbody > tr > td {
+            display: block; /* Stack cell contents vertically */
+            text-align: left; /* Left-align text */
+            border: none; /* Remove borders between cells */
+        }
+
+        /* Hide header on mobile, since we have cards */
+        .table thead {
+            display: none; /* Hide thead */
+        }
+
+        /* Adjust button sizes for smaller devices */
+        .btn {
+            width: 100%; /* Make buttons full-width */
+            margin-top: 5px; /* Space above buttons */
+        }
+    }
+
+    @media (max-width: 576px) {
+        .card {
+            font-size: 12px; /* Further reduce font size for very small screens */
+        }
+
+        .btn-primary {
+            padding: 10px; /* Adjust button padding for small devices */
+        }
+
+        .table {
+            display: block; /* Make table scrollable on small screens */
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+    }
+</style>
+
+
   </head>
-  <body>
-    <div class="container-fluid p-2">
-      <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="/ceres/admin"><b>DASHBOARD</b></a></li>
-              <li class="breadcrumb-item active" aria-current="page"><b>BUS</b></li>
-          </ol>
-      </nav>
-      <div class="card">
-          <div class="card-header">
-              <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#newBusModal">
-                  <i class="fa fa-plus"></i> New Bus
-              </button>
-          </div>
-          <div class="card-body" style="background: linear-gradient(to top, #f3e7e9, #e3eeff);">
-              <div class="table-responsive">
-                  <table id="myTable" class="table table-striped">
-                      <thead>
-                          <tr>
-                              <th>#</th>
-                              <th>Bus Number</th>
-                              <th>Bus Name</th>
-                              <th>Bus Type</th>
-                              <th>Actions</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          <?php
-                          $result = mysqli_query($conn, "SELECT * FROM tblbus");
-                          $i = 1;
-                          while ($row = mysqli_fetch_array($result)) {
-                          ?>
-                          <tr id="<?php echo $row["id"]; ?>">
-                              <th><?php echo $i; ?></th>
-                              <td><?php echo $row["bus_code"]; ?></td>
-                              <td><?php echo $row["bus_num"]; ?></td>
-                              <td><?php echo $row["bus_type"]; ?></td>
-                              <td>
-                                  <a href="#busEditModal" class="btn btn-warning btn-sm busUpdate" data-id="<?php echo $row["id"]; ?>" 
-                                  data-bus_code="<?php echo $row["bus_code"]; ?>" data-bus_num="<?php echo $row["bus_num"]; ?>" 
-                                  data-bus_type="<?php echo $row["bus_type"]; ?>" data-toggle="modal">Edit</a>
-                                  <a href="#busDeleteModal" class="btn btn-danger btn-sm busDelete" data-id="<?php echo $row["id"]; ?>" data-toggle="modal">Delete</a>
-                              </td>
-                          </tr>
-                          <?php $i++; } ?>
-                      </tbody>
-                  </table>
-              </div>
-          </div>
-      </div>
+<div>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/ceres/admin" style="font-family: 'Times New Roman', serif;"><b>DASHBOARD</b></a></li>
+            <li class="breadcrumb-item active" aria-current="page" style="font-family: 'Times New Roman', serif;"><b>BUS</b></li>
+     </ol>
+    </nav>
+
+    <div class="card">
+        <div class="card-header">
+            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#newBusModal">
+            <i class="fa fa-plus" >   New Bus</i>
+            </button>
+        </div>
+        <div class="card-body" style="background-image: linear-gradient(to top, #f3e7e9 0%, #e3eeff 99%, #e3eeff 100%);">
+        <div class="table-responsive">
+    <table id="myTable" class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Bus Number</th>
+                <th scope="col">Bus Name</th>
+                <th scope="col">Bus Type</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $result = mysqli_query($conn,"SELECT * FROM tblbus");
+            $i=1;
+            while($row = mysqli_fetch_array($result)) {
+            ?>
+            <tr id="<?php echo $row["id"]; ?>">
+                <th scope="row"><?php echo $i; ?></th>
+                <td><?php echo $row["bus_code"]; ?></td>
+                <td><?php echo $row["bus_num"]; ?></td>
+                <td><?php echo $row["bus_type"]; ?></td>
+                <td>
+                    <a href="#busEditModal" class="btn btn-sm btn-warning busUpdate"
+                        data-id="<?php echo $row["id"]; ?>" 
+                        data-bus_code="<?php echo $row["bus_code"]; ?>"                                
+                        data-bus_num="<?php echo $row["bus_num"]; ?>"
+                        data-bus_type="<?php echo $row["bus_type"]; ?>"
+                        data-toggle="modal">Edit</a>
+                    <a href="#busDeleteModal" class="btn btn-sm btn-danger busDelete"
+                        data-id="<?php echo $row["id"]; ?>" data-toggle="modal">Delete</a>
+                </td>
+            </tr>
+            <?php
+            $i++;
+            }
+            ?>
+        </tbody>
+    </table>
+</div>
+    </div>
+</div>
+
 <!-- New Bus Modal -->
 <div class="modal fade" id="newBusModal" tabindex="-1" aria-labelledby="newBusModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -230,194 +281,82 @@ if (substr($request, -4) == '.php') {
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
 <script>
 $('#myTable').DataTable();
 
 $("#bus_form").submit(function(event) {
     event.preventDefault();
-
-    let busCode = $("#bus_code").val().trim();
-    let busNum = $("#bus_num").val().trim();
-    let busType = $("#bus_type").val();
-
-    if (!busCode || !busNum || !busType) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Validation Error',
-            text: 'All fields are required!',
-        });
-        return;
-    }
-
-    // AJAX call to check duplicate bus number
-    $.ajax({
-        type: "POST",
-        url: "backend/bus.php",
-        data: { bus_num: busNum },
-        success: function(response) {
-            let dataResult = JSON.parse(response);
-            if (dataResult.exists) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Duplicate Entry',
-                    text: 'Bus number already exists. Please enter a unique number.',
-                });
-            } else {
-                // Proceed to save new bus if not duplicate
-                var data = $("#bus_form").serialize();
-                $.ajax({
-                    data: data,
-                    type: "post",
-                    url: "backend/bus.php",
-                    success: function(dataResult) {
-                        var dataResult = JSON.parse(dataResult);
-                        if (dataResult.statusCode == 200) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success!',
-                                text: 'New bus added successfully!',
-                            }).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error!',
-                                text: dataResult.title || 'Failed to add new bus.',
-                            });
-                        }
-                    },
-                    error: function() {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Something went wrong with the server request.',
-                        });
-                    }
-                });
-            }
-        },
-        error: function() {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Could not verify bus number.',
-            });
-        }
-    });
-});
-
-
-// Populate Edit Bus Modal Data
-$(document).on("click", ".busUpdate", function(e) {
-    var id = $(this).attr("data-id");
-    var bus_code = $(this).attr("data-bus_code");
-    var bus_num = $(this).attr("data-bus_num");
-    var bus_type = $(this).attr("data-bus_type");
-
-    $("#id_u").val(id);
-    $("#bus_code_u").val(bus_code);
-    $("#bus_num_u").val(bus_num);
-    $("#bus_type_u").val(bus_type);
-});
-
-// Update Bus
-$("#edit_bus_form").submit(function(event) {
-    event.preventDefault();
-    var data = $("#edit_bus_form").serialize();
-    
+    var data = $("#bus_form").serialize();
     $.ajax({
         data: data,
         type: "post",
         url: "backend/bus.php",
         success: function(dataResult) {
             var dataResult = JSON.parse(dataResult);
-            
             if (dataResult.statusCode == 200) {
-                $("#busEditModal").modal("hide");
-                
-                // SweetAlert success message
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Updated!',
-                    text: 'Bus updated successfully!',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    location.reload(); // Reload after confirming
-                });
-                
+                $("#newBusModal").modal("hide");
+                alert("New bus added successfully!");
+                location.reload();
             } else {
-                // SweetAlert error message
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: dataResult.title || 'Failed to update the bus.',
-                });
+                alert(dataResult.title);
             }
         },
-        error: function() {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Something went wrong with the server request.',
-            });
-        }
     });
 });
 
-// Populate Delete Bus Modal Data
+$(document).on("click", ".busUpdate", function(e) {
+    var id = $(this).attr("data-id");
+    var bus_code = $(this).attr("data-bus_code");
+    var bus_num = $(this).attr("data-bus_num");
+    var bus_type = $(this).attr("data-bus_type");
+       $("#id_u").val(id);
+       $("#bus_code_u").val(bus_code);
+    $("#bus_num_u").val(bus_num);
+    $("#bus_type_u").val(bus_type);
+  
+});
+
+$("#edit_bus_form").submit(function(event) {
+    event.preventDefault();
+    var data = $("#edit_bus_form").serialize();
+    $.ajax({
+        data: data,
+        type: "post",
+        url: "backend/bus.php",
+        success: function(dataResult) {
+            var dataResult = JSON.parse(dataResult);
+            if (dataResult.statusCode == 200) {
+                $("#busEditModal").modal("hide");
+                alert("Bus updated successfully!");
+                location.reload();
+            } else {
+                alert(dataResult.title);
+            }
+        },
+    });
+});
+
 $(document).on("click", ".busDelete", function() {
     var id = $(this).attr("data-id");
     $("#id_d").val(id);
 });
 
-// Delete Bus
 $("#delete_bus_form").submit(function(event) {
     event.preventDefault();
-    
-    // SweetAlert confirmation dialog
-    Swal.fire({
-        title: 'Are you sure?',
-        text: 'This action cannot be undone!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                cache: false,
-                data: {
-                    type: 3,
-                    id: $("#id_d").val(),
-                },
-                type: "post",
-                url: "backend/bus.php",
-                success: function(dataResult) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Deleted!',
-                        text: 'Bus deleted successfully!',
-                        confirmButtonText: 'OK'
-                    }).then(() => {
-                        $("#busDeleteModal").modal("hide");
-                        $("#" + dataResult).remove(); // Remove deleted item from the DOM
-                        location.reload(); // Reload the page after confirming
-                    });
-                },
-                error: function() {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Something went wrong with the deletion request.',
-                    });
-                }
-            });
-        }
+    $.ajax({
+        cache: false,
+        data: {
+            type: 3,
+            id: $("#id_d").val(),
+        },
+        type: "post",
+        url: "backend/bus.php",
+        success: function(dataResult) {
+            alert("Bus deleted successfully!");
+            $("#busDeleteModal").modal("hide");
+            $("#" + dataResult).remove();
+            location.reload();
+        },
     });
 });
 </script>
