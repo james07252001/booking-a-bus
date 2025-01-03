@@ -255,7 +255,7 @@ $("#bus_form").submit(function(event) {
     // AJAX call to check duplicate bus number
     $.ajax({
         type: "POST",
-        url: "backend/check_bus_number.php",
+        url: "backend/bus.php",
         data: { bus_num: busNum },
         success: function(response) {
             let dataResult = JSON.parse(response);
