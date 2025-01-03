@@ -1,30 +1,38 @@
 <?php
-// Include database configuration
-include_once '../config/database.php';
+header('Content-Type: application/json');
 
-// Check if the POST request contains 'bus_num'
-if (isset($_POST['bus_num'])) {
-    $bus_num = mysqli_real_escape_string($conn, $_POST['bus_num']);
+// Database connection
+$host = '127.0.0.1';
+$username = 'u510162695_bobrs';
+$password = '1Bobrs_password';
+$dbname = 'u510162695_bobrs';
 
-    // Query to check if the bus number exists in the database
-    $query = "SELECT COUNT(*) AS count FROM tblbus WHERE bus_num = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("s", $bus_num);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
+$conn = new mysqli($host, $username, $password, $dbname);
 
-    // Prepare the response
-    $response = [
-        'exists' => ($row['count'] > 0) ? true : false
-    ];
-
-    // Return the JSON response
-    echo json_encode($response);
-} else {
-    // If no bus_num is provided, return an error response
-    echo json_encode(['exists' => false, 'error' => 'No bus number provided.']);
+// Check connection
+if ($conn->connect_error) {
+    echo json_encode(['statusCode' => 500, 'message' => 'Database connection failed: ' . $conn->connect_error]);
+    exit();
 }
 
-// Close the connection
+// Get bus number from POST request
+$bus_num = isset($_POST['bus_num']) ? $conn->real_escape_string($_POST['bus_num']) : '';
+
+if (empty($bus_num)) {
+    echo json_encode(['statusCode' => 400, 'message' => 'Bus number is required']);
+    exit();
+}
+
+// Check if bus number exists in the database
+$sql = "SELECT id FROM tblbus WHERE bus_num = '$bus_num' LIMIT 1";
+$result = $conn->query($sql);
+
+if ($result && $result->num_rows > 0) {
+    echo json_encode(['exists' => true]);
+} else {
+    echo json_encode(['exists' => false]);
+}
+
+// Close connection
 $conn->close();
+?>
